@@ -1,0 +1,903 @@
+<!doctype html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aprendizaje por Refuerzo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:ital,wght@0,400;0,700;0,900;1,600&family=Shantell+Sans:ital,wght@0,500;0,700;0,800;1,700&display=swap">
+<link rel="stylesheet" href="sistema.css">
+</head>
+<body>
+
+<script>
+/* El visor de Artifacts envuelve esta página en su propio <html> (el
+   data-theme="light" de la etiqueta <html> de arriba no es el elemento raíz
+   real ahí, así que no sirve por sí solo) Y ADEMÁS, tras cargar, le hace un
+   postMessage a la ventana padre preguntando el tema del cliente de Claude
+   y REESCRIBE data-theme con la respuesta — de forma asíncrona, después de
+   que cualquier script nuestro ya haya corrido una sola vez. Por eso fijar
+   el valor una sola vez al cargar no basta: minutos o milisegundos después
+   el visor lo pisa con "dark" si el cliente del usuario está en oscuro.
+   Solución: vigilar el atributo y devolverlo a claro cada vez que alguien
+   más lo cambie, hasta que la propia persona haga clic en el botón ◐ — a
+   partir de ahí se respeta su elección y se deja de vigilar. */
+(function () {
+  var raiz = document.documentElement;
+  var manual = false;
+
+  function forzarClaro() {
+    if (!manual && raiz.dataset.theme !== 'light') raiz.dataset.theme = 'light';
+  }
+
+  forzarClaro();
+  new MutationObserver(forzarClaro).observe(raiz, { attributes: true, attributeFilter: ['data-theme'] });
+
+  addEventListener('DOMContentLoaded', function () {
+    document.getElementById('tema').addEventListener('click', function () {
+      manual = true;
+      var esOscuro = raiz.dataset.theme === 'dark';
+      raiz.dataset.theme = esOscuro ? 'light' : 'dark';
+    });
+  });
+})();
+</script>
+
+<div class="momento-actual" id="momentoActual">Portada</div>
+
+<div class="pista">
+  <span class="anotacion">← → para navegar</span>
+  <button class="boton" id="tema" type="button" aria-label="Cambiar entre modo claro y oscuro">◐</button>
+</div>
+
+<div class="escenario" id="escenario">
+
+<!-- ══════════ PORTADA ══════════ -->
+<section class="lamina portada activa" data-momento="0" aria-label="Portada">
+  <div class="lienzo">
+    <p class="creditos">Ingeniería de Sistemas Autoadaptables · Universidad EAFIT</p>
+    <h1>Aprendizaje<br>por <span class="destaca">Refuerzo</span></h1>
+    <p class="subtitulo">Nadie le dice qué hacer. Nadie le dice si lo hizo bien. Aprende de todos modos.</p>
+    <div class="diagrama" style="max-width:min(300px, 42vw, 34vh);margin-inline:auto">
+      <svg viewBox="0 0 300 190" role="img" aria-label="Un perro dibujado a mano junto a un premio">
+        <path class="trazo" d="M18 168 q 70 -7 132 -1 t 132 -3" stroke="var(--rejilla)" stroke-width="5"/>
+        <g class="menea">
+          <path class="trazo" d="M62 108 q -26 -12 -30 -38" stroke="var(--tinta)" stroke-width="7"/>
+        </g>
+        <path class="trazo" d="M62 110 q -4 -40 40 -44 q 46 -4 62 6 q 8 4 10 22 q 2 22 -8 34 q -50 12 -96 4 q -8 -6 -8 -22 z"
+              fill="var(--morado-lav)" stroke="var(--morado)" stroke-width="6"/>
+        <path class="trazo" d="M80 140 v 26 M108 143 v 23 M140 143 v 23 M166 138 v 28" stroke="var(--morado)" stroke-width="6"/>
+        <path class="trazo" d="M172 78 q 4 -30 30 -32 q 30 -2 34 26 q 3 26 -18 32 q -28 6 -42 -8 q -5 -8 -4 -18 z"
+              fill="var(--morado-lav)" stroke="var(--morado)" stroke-width="6"/>
+        <path class="trazo" d="M182 54 q -16 6 -14 30 q 12 4 18 -8" fill="var(--morado)" stroke="var(--morado)" stroke-width="5"/>
+        <path class="trazo" d="M232 82 q 22 -2 26 12 q 2 12 -14 14 q -14 2 -18 -8" fill="var(--papel-alto)" stroke="var(--morado)" stroke-width="5"/>
+        <circle cx="255" cy="90" r="5" fill="var(--tinta)"/>
+        <circle cx="212" cy="70" r="4.5" fill="var(--tinta)"/>
+        <!-- El hueso va justo delante del hocico (el perro mira a la derecha),
+             no bajo la cola. Centrado en ~(256,126), el morro está en (255,90). -->
+        <g transform="translate(230,120) rotate(-14)">
+          <path class="trazo" d="M6 12 h 34" stroke="var(--verde)" stroke-width="11"/>
+          <circle cx="6"  cy="6"  r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+          <circle cx="6"  cy="18" r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+          <circle cx="42" cy="6"  r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+          <circle cx="42" cy="18" r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MOMENTO 1 ══════════ -->
+<section class="lamina divisor" data-momento="1" aria-label="Momento 1">
+  <div class="lienzo">
+    <span class="numero">1</span>
+    <h2>Tres formas<br>de aprender</h2>
+    <p class="lema">Empezamos por dos que quizás ya conozcas —supervisado y no supervisado— y una tercera que seguramente no: el refuerzo. Verlas juntas es la forma más rápida de entender qué tiene de distinto.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="1" aria-label="Los tres tipos de aprendizaje">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Tres formas de aprender
+      <span class="sub">Cada familia responde a una pregunta distinta. Puede que las dos primeras ya te suenen — la tercera es la protagonista de hoy.</span>
+    </h2>
+    <div class="tres">
+      <article class="caja" data-color="azul" style="color:var(--azul)">
+        <svg class="icono" viewBox="0 0 120 76" role="img" aria-label="Puntos etiquetados y una marca de acierto">
+          <path class="trazo" d="M14 60 q 40 -46 92 -44" stroke="var(--azul)" stroke-width="4.5"/>
+          <circle cx="30" cy="30" r="8" fill="var(--azul)"/>
+          <circle cx="52" cy="20" r="8" fill="var(--azul)"/>
+          <circle cx="42" cy="58" r="8" fill="none" stroke="var(--azul)" stroke-width="4"/>
+          <circle cx="76" cy="56" r="8" fill="none" stroke="var(--azul)" stroke-width="4"/>
+          <path class="trazo" d="M92 22 l 7 8 l 14 -17" stroke="var(--verde)" stroke-width="5"/>
+        </svg>
+        <span class="etiqueta">Supervisado</span>
+        <h3>Con respuestas</h3>
+        <p>Miles de ejemplos <em>ya resueltos</em>. El modelo aprende a reproducir la etiqueta correcta.</p>
+        <p class="pregunta">«¿Qué es esto?»</p>
+      </article>
+
+      <article class="caja caja--b" data-color="naranja" style="color:var(--naranja)">
+        <svg class="icono" viewBox="0 0 120 76" role="img" aria-label="Dos grupos de puntos rodeados">
+          <path class="trazo" d="M12 34 q 4 -22 24 -20 q 20 2 18 22 q -2 18 -22 18 q -22 0 -20 -20 z" stroke="var(--naranja)" stroke-width="4.5"/>
+          <path class="trazo" d="M66 46 q 2 -26 24 -24 q 22 2 20 22 q -2 18 -22 18 q -24 0 -22 -16 z" stroke="var(--naranja)" stroke-width="4.5"/>
+          <circle cx="26" cy="30" r="5.5" fill="var(--naranja)"/>
+          <circle cx="40" cy="38" r="5.5" fill="var(--naranja)"/>
+          <circle cx="32" cy="44" r="5.5" fill="var(--naranja)"/>
+          <circle cx="82" cy="42" r="5.5" fill="var(--naranja)"/>
+          <circle cx="94" cy="50" r="5.5" fill="var(--naranja)"/>
+          <circle cx="86" cy="56" r="5.5" fill="var(--naranja)"/>
+        </svg>
+        <span class="etiqueta">No supervisado</span>
+        <h3>Sin respuestas</h3>
+        <p>Solo datos, ninguna etiqueta. Busca por su cuenta <em>qué se parece a qué</em>.</p>
+        <p class="pregunta">«¿Qué hay aquí dentro?»</p>
+      </article>
+
+      <article class="caja caja--c" data-color="morado" style="color:var(--morado)">
+        <svg class="icono" viewBox="0 0 120 76" role="img" aria-label="Un rastro que avanza hacia una estrella">
+          <path class="trazo flujo" d="M10 64 q 24 6 36 -12 q 12 -18 32 -10" stroke="var(--morado)" stroke-width="4.5"/>
+          <circle cx="10" cy="64" r="6" fill="var(--morado)"/>
+          <circle cx="46" cy="52" r="5" fill="var(--morado)" opacity=".55"/>
+          <circle cx="78" cy="42" r="5" fill="var(--morado)" opacity=".8"/>
+          <path d="M99 6 l 4.5 10.5 l 11.5 1 l -8.7 7.8 l 2.6 11.3 l -9.9 -6.1 l -9.9 6.1 l 2.6 -11.3 l -8.7 -7.8 l 11.5 -1 z"
+                fill="var(--amarillo)" stroke="var(--tinta)" stroke-width="2.5" stroke-linejoin="round"/>
+        </svg>
+        <span class="etiqueta">Por refuerzo</span>
+        <h3>Con consecuencias</h3>
+        <p>Nadie da la respuesta. Prueba, recibe premio o castigo, y <em>ajusta su conducta</em>.</p>
+        <p class="pregunta">«¿Qué me conviene hacer?»</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="1" aria-label="Qué comparten el aprendizaje supervisado y el no supervisado">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Los dos primeros se parecen más de lo que parece
+      <span class="sub">Discuten sobre si hay etiquetas o no. Pero comparten tres supuestos de fondo, y el refuerzo rompe los tres.</span>
+    </h2>
+    <div class="dos">
+      <article class="caja" data-color="azul">
+        <span class="etiqueta" style="color:var(--azul)">Supervisado y no supervisado</span>
+        <ul class="lista lista--azul">
+          <li>Los datos <b>ya existen</b> y están quietos en una tabla.</li>
+          <li>Acierte o falle, <b>ve exactamente los mismos datos después</b>: nada de lo que haga cambia lo que le toca ver.</li>
+          <li><b>El orden da igual</b>: barajar el dataset no altera nada.</li>
+        </ul>
+      </article>
+      <article class="caja caja--b" data-color="morado">
+        <span class="etiqueta" style="color:var(--morado)">Por refuerzo</span>
+        <ul class="lista">
+          <li>El agente <b>fabrica sus propios datos</b> con cada decisión.</li>
+          <li>Lo que hace hoy <b>determina qué verá mañana</b>.</li>
+          <li><b>El orden lo es todo</b>: si mueves las decisiones de lugar, cambias lo que pasa después. No se pueden barajar como a una baraja de cartas.</li>
+        </ul>
+      </article>
+    </div>
+    <p class="anotacion" style="text-align:center">Por eso no es «un tercer algoritmo»: es otro tipo de problema.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="1" aria-label="Feedback instructivo frente a evaluativo">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">La diferencia que lo cambia todo
+      <span class="sub">No está en los datos, sino en el tipo de respuesta que recibe el que aprende: el supervisado y el no supervisado reciben una; el refuerzo, la otra.</span>
+    </h2>
+    <div class="dos">
+      <article class="caja" data-color="azul">
+        <span class="etiqueta" style="color:var(--azul)">Instructivo</span>
+        <h3>«La respuesta era: gato»</h3>
+        <p>Así aprenden el <b>supervisado</b> y el <b>no supervisado</b>: te dicen qué debías haber hecho, sin importar lo que hiciste. La corrección viene ya resuelta.</p>
+        <p class="pregunta" style="color:var(--azul)">No hace falta probar nada más.</p>
+      </article>
+      <article class="caja caja--b" data-color="morado">
+        <span class="etiqueta" style="color:var(--morado)">Evaluativo</span>
+        <h3>«Eso valió 3 puntos»</h3>
+        <p>Así aprende el <b>refuerzo</b>: te puntúan lo que hiciste, y callan sobre si existía algo mejor. Solo juzga, no enseña.</p>
+        <p class="pregunta" style="color:var(--morado)">¿Habrá algo que valga 10?</p>
+      </article>
+    </div>
+    <div class="caja" data-color="amarillo" style="transform:rotate(-.3deg)">
+      <p><span class="resalta">La única forma de averiguarlo es probarlo.</span> Por eso la exploración no es un truco que alguien añadió al algoritmo: es la consecuencia inevitable de recibir notas en vez de respuestas. Volveremos a esto.</p>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="1" aria-label="El bucle entre agente y entorno">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Todo el Aprendizaje por Refuerzo cabe en este bucle
+      <span class="sub">El agente actúa. El mundo responde. El agente aprende. Y vuelta a empezar — miles de veces.</span>
+    </h2>
+    <div class="diagrama">
+      <svg viewBox="0 0 900 430" role="img" aria-label="El agente ejecuta una acción sobre el entorno, y el entorno le devuelve un nuevo estado y una recompensa">
+        <defs>
+          <marker id="pta-morado" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 1 L11 6 L1 11 z" fill="var(--morado)"/>
+          </marker>
+          <marker id="pta-azul" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 1 L11 6 L1 11 z" fill="var(--azul)"/>
+          </marker>
+        </defs>
+        <text class="rotulo" x="450" y="56" text-anchor="middle" font-size="32" fill="var(--morado)">acción</text>
+        <text class="rotulo-min" x="450" y="92" text-anchor="middle" font-size="26" fill="var(--tinta-suave)">«giro a la izquierda»</text>
+        <path class="trazo flujo" d="M334 188 C 400 104, 500 104, 560 186"
+              stroke="var(--morado)" stroke-width="6" marker-end="url(#pta-morado)"/>
+        <g transform="rotate(-0.6 195 222)">
+          <rect x="60" y="162" width="270" height="120" rx="26" fill="var(--morado-lav)" stroke="var(--morado)" stroke-width="6"/>
+          <text class="rotulo" x="195" y="214" text-anchor="middle" font-size="40" fill="var(--tinta)">AGENTE</text>
+          <text class="rotulo-min" x="195" y="250" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">el que aprende</text>
+        </g>
+        <g transform="rotate(0.6 705 222)">
+          <rect x="570" y="162" width="270" height="120" rx="26" fill="var(--azul-lav)" stroke="var(--azul)" stroke-width="6"/>
+          <text class="rotulo" x="705" y="214" text-anchor="middle" font-size="40" fill="var(--tinta)">ENTORNO</text>
+          <text class="rotulo-min" x="705" y="250" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">el mundo</text>
+        </g>
+        <path class="trazo flujo" d="M566 256 C 500 340, 400 340, 340 258"
+              stroke="var(--azul)" stroke-width="6" marker-end="url(#pta-azul)"/>
+        <text class="rotulo" x="450" y="384" text-anchor="middle" font-size="32"><tspan fill="var(--azul)">nuevo estado</tspan><tspan fill="var(--tinta-suave)"> + </tspan><tspan fill="var(--verde)">recompensa</tspan></text>
+        <text class="rotulo-min" x="450" y="418" text-anchor="middle" font-size="26" fill="var(--tinta-suave)">«dónde estoy · qué tal lo hice»</text>
+      </svg>
+    </div>
+    <div class="cuatro">
+      <article class="caja" data-color="azul"><h3 style="color:var(--azul)">Estado · s</h3><p>Lo que el agente ve del mundo ahora mismo.</p></article>
+      <article class="caja caja--b" data-color="morado"><h3 style="color:var(--morado)">Acción · a</h3><p>Lo que puede hacer desde ese estado.</p></article>
+      <article class="caja caja--c" data-color="verde"><h3 style="color:var(--verde)">Recompensa · r</h3><p>Un número. Ni explicación, ni instrucciones.</p></article>
+      <article class="caja" data-color="amarillo"><h3 style="color:var(--amarillo)">Política · π</h3><p>Su forma de decidir: de estado a acción.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MOMENTO 2 ══════════ -->
+<section class="lamina divisor" data-momento="2" aria-label="Momento 2">
+  <div class="lienzo">
+    <span class="numero">2</span>
+    <h2>Por dentro</h2>
+    <p class="lema">En el Momento 1 vimos <em>qué</em> es el bucle agente–entorno. Ahora vamos a <em>resolverlo</em>: cómo hace el agente para encontrar la mejor forma de decidir. Se llega en tres pasos encadenados.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Qué problema resuelve el aprendizaje por refuerzo">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">¿Qué intenta resolver?
+      <span class="sub">En una frase: <b>encontrar, por prueba y error, la mejor secuencia de decisiones para lograr un objetivo</b> — sin que nadie diga de antemano cuál es la decisión correcta en cada paso.</span>
+    </h2>
+    <p class="anotacion" style="text-align:center">Dicho así suena sencillo. Pero esconde <b>tres dificultades</b>, y todo lo que viene después no es más que la respuesta a cada una.</p>
+    <div class="tres">
+      <article class="caja" data-color="amarillo">
+        <span class="etiqueta" style="color:var(--amarillo)">Dificultad 1</span>
+        <h3>El resultado llega tarde</h3>
+        <p>Pierdes la partida de ajedrez en la jugada 60, pero el error estuvo en la 12. Entre medias tomaste 48 decisiones más. <b>¿Cuál de todas fue la mala?</b></p>
+        <p class="pregunta" style="color:var(--amarillo)">→ Habrá que medir el futuro, no solo el premio de ahora.</p>
+      </article>
+      <article class="caja caja--b" data-color="naranja">
+        <span class="etiqueta" style="color:var(--naranja)">Dificultad 2</span>
+        <h3>Nadie dice si había algo mejor</h3>
+        <p>Solo le puntúan lo que hizo. Si se limita a repetir lo que ya le funciona, <b>nunca descubrirá que existía una opción superior.</b></p>
+        <p class="pregunta" style="color:var(--naranja)">→ Habrá que obligarlo a probar de vez en cuando.</p>
+      </article>
+      <article class="caja caja--c" data-color="azul">
+        <span class="etiqueta" style="color:var(--azul)">Dificultad 3</span>
+        <h3>No conoce las reglas del mundo</h3>
+        <p>Nadie le entrega un manual: no sabe a dónde lo llevará cada acción hasta que la prueba. <b>Tiene que deducirlo actuando.</b></p>
+        <p class="pregunta" style="color:var(--azul)">→ Habrá que aprender jugando, sin manual.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="El plan del momento 2">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">El plan: tres pasos
+      <span class="sub">Todo lo que viene responde a una sola pregunta: <b>¿cómo encuentra el agente la mejor forma de decidir?</b> No se llega de un salto, sino en tres pasos que dependen uno del otro.</span>
+    </h2>
+    <div class="tres">
+      <article class="caja" data-color="azul">
+        <span class="etiqueta" style="color:var(--azul)">Paso 1</span>
+        <h3>Escribir el mundo</h3>
+        <p>Sin un lenguaje matemático para describir el problema, no hay nada que resolver. Aquí aparecen <b>Markov</b> y el <b>MDP</b>.</p>
+      </article>
+      <article class="caja caja--b" data-color="verde">
+        <span class="etiqueta" style="color:var(--verde)">Paso 2</span>
+        <h3>Medir qué es «bueno»</h3>
+        <p>Para comparar dos formas de decidir hay que poder puntuarlas. Aquí aparecen el <b>retorno</b>, el <b>valor</b> y <b>Bellman</b>.</p>
+      </article>
+      <article class="caja caja--c" data-color="morado">
+        <span class="etiqueta" style="color:var(--morado)">Paso 3</span>
+        <h3>Encontrar la mejor</h3>
+        <p>Ya se puede buscar. Dos caminos, según conozcas o no las reglas del mundo: <b>con mapa</b>, o <b>aprendiendo de la experiencia</b>.</p>
+      </article>
+    </div>
+    <p class="anotacion" style="text-align:center">Cada lámina que sigue lleva marcado a qué paso pertenece.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="La propiedad de Markov">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 1 · La propiedad de Markov
+      <span class="sub">Para resolver el problema hay que poder escribirlo. Obstáculo: si el futuro dependiera de <em>todo</em> lo ocurrido desde el principio, no habría forma de calcular nada. Esta suposición lo vuelve manejable.</span>
+    </h2>
+    <div class="caja" data-color="azul" style="transform:rotate(.25deg)">
+      <p class="formula formula--peq">
+        P(<span class="v-estado">s<sub>t+1</sub></span> | <span class="v-estado">s<sub>t</sub></span>)
+        &nbsp;=&nbsp;
+        P(<span class="v-estado">s<sub>t+1</sub></span> | <span class="v-estado">s<sub>1</sub></span>, <span class="v-estado">s<sub>2</sub></span>, …, <span class="v-estado">s<sub>t</sub></span>)
+      </p>
+    </div>
+    <div class="dos">
+      <article class="caja" data-color="azul">
+        <h3 style="color:var(--azul)">Qué es cada símbolo</h3>
+        <div class="leyenda">
+          <div><b>P(…)</b><span>La probabilidad de que ocurra lo de dentro.</span></div>
+          <div><b>|</b><span>«sabiendo que»: lo que va detrás es lo que ya conoces.</span></div>
+          <div><b>s<sub>t</sub></b><span>El estado en el instante actual.</span></div>
+          <div><b>s<sub>t+1</sub></b><span>El estado en el instante siguiente.</span></div>
+          <div><b>s<sub>1</sub>…s<sub>t</sub></b><span>Toda la historia, del inicio hasta ahora.</span></div>
+        </div>
+      </article>
+      <article class="caja caja--b" data-color="amarillo">
+        <h3 style="color:var(--amarillo)">Qué dice la ecuación</h3>
+        <p>Izquierda: probabilidad del siguiente estado <b>sabiendo solo el presente</b>. Derecha: la misma, <b>sabiendo toda la historia</b>. <span class="resalta">El «=» afirma que son idénticas</span> — el pasado no aporta nada que el presente no diga ya.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Markov en la práctica">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 1 · Markov, en la práctica
+      <span class="sub">Si los dos lados de la ecuación dan lo mismo, se cumple Markov y basta con el presente. Si dan distinto, falta información en el estado. La misma pelota sirve para los dos casos.</span>
+    </h2>
+    <div class="dos">
+      <article class="caja" data-color="naranja">
+        <h3 style="color:var(--naranja)">Los dos lados NO coinciden</h3>
+        <p>El estado es <b>solo la posición</b> de una pelota en el aire. Con eso no puedes predecir dónde estará dentro de un segundo — pero viendo los instantes anteriores sí, porque deducirías hacia dónde iba.</p>
+        <p class="pregunta" style="color:var(--naranja)">La historia sí aportaba: falla Markov.</p>
+      </article>
+      <article class="caja caja--b" data-color="verde">
+        <h3 style="color:var(--verde)">Los dos lados coinciden</h3>
+        <p>El estado es <b>posición y velocidad</b>. Ahora conocer toda la historia no te daría ni un dato más útil del que ya tienes en este instante.</p>
+        <p class="pregunta" style="color:var(--verde)">Basta el presente: se cumple Markov.</p>
+      </article>
+    </div>
+    <p class="anotacion" style="text-align:center">Por eso, al plantear un problema de refuerzo, la primera decisión es <b>qué meter dentro del estado</b>: si falta algo, el agente no podrá predecir ni aprender bien.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Cadena de Markov">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 1 · Una cadena de Markov
+      <span class="sub">¿Por qué hablamos de esto en una charla de refuerzo? Porque <b>el entorno del bucle es exactamente un mundo así</b>: cambia de estado con ciertas probabilidades. Esto es lo más simple que se puede construir aceptando Markov — y todavía nadie decide nada.</span>
+    </h2>
+    <div class="diagrama">
+      <svg viewBox="0 0 900 400" role="img" aria-label="Cadena de Markov del clima: soleado se mantiene con 0.6 y pasa a nublado con 0.4; nublado se mantiene con 0.3 y pasa a lluvia con 0.7; de lluvia se vuelve a soleado con probabilidad 1">
+        <defs>
+          <marker id="pta-est" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M1 1 L11 6 L1 11 z" fill="var(--azul)"/>
+          </marker>
+        </defs>
+
+        <!-- bucles propios, con las etiquetas por encima del arco (ápice y≈55) -->
+        <text class="rotulo" x="150" y="30" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">0.6</text>
+        <path class="trazo" d="M112 118 C 92 34, 208 34, 188 118" stroke="var(--azul)" stroke-width="5" marker-end="url(#pta-est)"/>
+        <text class="rotulo" x="450" y="30" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">0.3</text>
+        <path class="trazo" d="M412 118 C 392 34, 508 34, 488 118" stroke="var(--azul)" stroke-width="5" marker-end="url(#pta-est)"/>
+
+        <!-- transiciones entre estados, rectas en el hueco -->
+        <text class="rotulo" x="298" y="150" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">0.4</text>
+        <path class="trazo" d="M230 180 H 364" stroke="var(--azul)" stroke-width="5" marker-end="url(#pta-est)"/>
+        <text class="rotulo" x="598" y="150" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">0.7</text>
+        <path class="trazo" d="M530 180 H 664" stroke="var(--azul)" stroke-width="5" marker-end="url(#pta-est)"/>
+
+        <!-- estados -->
+        <circle cx="150" cy="180" r="72" fill="var(--azul-lav)" stroke="var(--azul)" stroke-width="6"/>
+        <text class="rotulo" x="150" y="190" text-anchor="middle" font-size="24" fill="var(--tinta)">SOLEADO</text>
+        <circle cx="450" cy="180" r="72" fill="var(--azul-lav)" stroke="var(--azul)" stroke-width="6"/>
+        <text class="rotulo" x="450" y="190" text-anchor="middle" font-size="24" fill="var(--tinta)">NUBLADO</text>
+        <circle cx="750" cy="180" r="72" fill="var(--azul-lav)" stroke="var(--azul)" stroke-width="6"/>
+        <text class="rotulo" x="750" y="190" text-anchor="middle" font-size="24" fill="var(--tinta)">LLUVIA</text>
+
+        <!-- retorno, con la etiqueta por debajo del arco (ápice y≈325) -->
+        <path class="trazo" d="M748 250 C 700 350, 200 350, 152 250" stroke="var(--azul)" stroke-width="5" marker-end="url(#pta-est)"/>
+        <text class="rotulo" x="450" y="376" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">1.0</text>
+      </svg>
+    </div>
+    <p class="anotacion" style="text-align:center">Las salidas de cada estado suman 1. El mundo se mueve solo; nosotros solo miramos.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="De cadena de Markov a proceso de decisión de Markov">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 1 · De mirar a decidir
+      <span class="sub">A esa cadena le faltan dos cosas para describir nuestro problema: <em>premios</em> y <em>decisiones</em>. Se añaden una por una, y al final tenemos el <b>proceso de decisión de Markov</b> — abreviado <b>MDP</b>.</span>
+    </h2>
+    <div class="tres">
+      <article class="caja" data-color="azul">
+        <span class="etiqueta" style="color:var(--azul)">Escalón 1</span>
+        <h3>Cadena de Markov</h3>
+        <p class="formula formula--peq" style="text-align:left">⟨ <span class="v-estado">S</span>, P ⟩</p>
+        <p>Estados y transiciones. El mundo cambia solo. <b>Tú miras.</b></p>
+      </article>
+      <article class="caja caja--b" data-color="verde">
+        <span class="etiqueta" style="color:var(--verde)">Escalón 2</span>
+        <h3>Proceso de recompensa</h3>
+        <p class="formula formula--peq" style="text-align:left">⟨ <span class="v-estado">S</span>, P, <span class="v-premio">R</span>, <span class="v-gamma">γ</span> ⟩</p>
+        <p>Ahora además puntúa. <b>Tú sigues mirando</b>, pero ya sabes qué te conviene.</p>
+      </article>
+      <article class="caja caja--c" data-color="morado">
+        <span class="etiqueta" style="color:var(--morado)">Escalón 3</span>
+        <h3>Proceso de decisión (MDP)</h3>
+        <p class="formula formula--peq" style="text-align:left">⟨ <span class="v-estado">S</span>, <span class="v-accion">A</span>, P, <span class="v-premio">R</span>, <span class="v-gamma">γ</span> ⟩</p>
+        <p>Aparecen las acciones. <b>Ahora eliges tú</b>, y el mundo responde.</p>
+      </article>
+    </div>
+    <div class="caja" data-color="amarillo" style="transform:rotate(-.3deg)">
+      <p>Este último —el <b>MDP</b>— es la versión completa. En la próxima lámina vemos qué significa cada letra, y por qué esto es, literalmente, la definición de <b>Aprendizaje por Refuerzo</b> (o <i>Reinforcement Learning</i>, <b>RL</b> por sus siglas en inglés).</p>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Definición formal de Aprendizaje por Refuerzo">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 1 completo · Ya podemos definirlo
+      <span class="sub">Con el lenguaje ya construido, la definición de Aprendizaje por Refuerzo deja de ser abstracta. Cada letra del MDP tiene nombre.</span>
+    </h2>
+    <div class="leyenda">
+      <div><b style="color:var(--azul)">S</b><span>Todos los estados posibles.</span></div>
+      <div><b style="color:var(--morado)">A</b><span>Todas las acciones posibles.</span></div>
+      <div><b style="color:var(--azul)">P</b><span>Las reglas del mundo: a qué estado lleva cada acción.</span></div>
+      <div><b style="color:var(--verde)">R</b><span>La recompensa de cada paso.</span></div>
+      <div><b style="color:var(--naranja)">γ</b><span>Cuánto le importa al agente el futuro.</span></div>
+    </div>
+    <div class="caja" data-color="morado" style="transform:rotate(-.2deg)">
+      <p style="margin-bottom:.5em"><span class="resalta">Nada de esto es nuevo.</span> S, A, R y la política π ya aparecieron en el bucle del Momento 1, solo que sin nombre matemático. P y γ son lo que Markov añade: la certeza de que el presente basta, y una forma de pesar el futuro.</p>
+      <p><b>Aprendizaje por Refuerzo</b> es encontrar la política óptima <b>π*</b> —la que consigue el mejor resultado posible— para un Proceso de Decisión de Markov, <b>aprendiendo de la experiencia</b> porque nadie entrega P ni R de antemano.</p>
+    </div>
+    <p class="anotacion" style="text-align:center">Paso 1 terminado: ya sabemos <b>qué</b> buscamos. El Paso 2 responde <b>cómo se mide</b>, y el Paso 3, <b>cómo se encuentra</b>.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="El retorno y el factor de descuento">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 2 · No maximizamos el premio: maximizamos el futuro
+      <span class="sub">Para comparar dos políticas hay que puntuarlas. Lo primero: fijar qué maximiza el agente — no <span class="v-premio">r</span>, sino <b>G</b>.</span>
+    </h2>
+    <div class="caja" data-color="verde" style="transform:rotate(.25deg)">
+      <p class="formula">
+        <b>G<sub>t</sub></b> &nbsp;=&nbsp; <span class="v-premio">r<sub>t+1</sub></span>
+        &nbsp;+&nbsp; <span class="v-gamma">γ</span> <span class="v-premio">r<sub>t+2</sub></span>
+        &nbsp;+&nbsp; <span class="v-gamma">γ</span><sup>2</sup> <span class="v-premio">r<sub>t+3</sub></span>
+        &nbsp;+&nbsp; …
+      </p>
+    </div>
+    <div class="dos">
+      <article class="caja" data-color="verde">
+        <h3 style="color:var(--verde)">Qué es cada símbolo</h3>
+        <div class="leyenda">
+          <div><b>G<sub>t</sub></b><span>El retorno: todo lo que el agente ganará desde ahora.</span></div>
+          <div><b>r<sub>t+1</sub>…</b><span>Cada recompensa que va llegando, paso a paso.</span></div>
+          <div><b>γ</b><span>El descuento: entre 0 y 1, resta peso al futuro.</span></div>
+          <div><b>γ<sup>2</sup>, γ<sup>3</sup></b><span>Cuanto más lejos, más veces se multiplica: pesa menos.</span></div>
+        </div>
+      </article>
+      <article class="caja caja--b" data-color="amarillo">
+        <h3 style="color:var(--amarillo)">Qué dice la ecuación</h3>
+        <p><span class="resalta">Suma todo el premio venidero, pero descontando lo que tarda en llegar.</span> Un <b>G</b> alto significa «desde aquí, el futuro pinta bien». Como es el número que el agente intenta maximizar, <b>comparar dos políticas es comparar sus G</b>.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Por qué el futuro pesa menos">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 2 · Por qué el futuro pesa menos
+      <span class="sub">Cada vez que una recompensa se aleja un paso, se multiplica otra vez por <span class="v-gamma">γ</span>. Así se ve cuánto vale realmente un premio según lo que tarde en llegar.</span>
+    </h2>
+    <!-- Tipografía interna grande a propósito: al limitar la altura el SVG se
+         escala a una fracción, y con fuentes pequeñas quedaba ilegible. -->
+    <div class="diagrama" style="--tope-diagrama:28vh">
+      <svg viewBox="0 0 900 300" role="img" aria-label="Con gamma 0.9 el peso de una recompensa cae de 1.00 en el paso siguiente a 0.35 once pasos después">
+        <path class="trazo" d="M30 232 H 870" stroke="var(--rejilla)" stroke-width="5"/>
+        <g fill="var(--naranja)">
+          <rect x="45"  y="60"  width="110" height="170" rx="8"/>
+          <rect x="185" y="92"  width="110" height="138" rx="8"/>
+          <rect x="325" y="118" width="110" height="112" rx="8"/>
+          <rect x="465" y="140" width="110" height="90"  rx="8"/>
+          <rect x="605" y="157" width="110" height="73"  rx="8"/>
+          <rect x="745" y="170" width="110" height="60"  rx="8"/>
+        </g>
+        <g class="rotulo" font-size="36" fill="var(--tinta)" text-anchor="middle">
+          <text x="100" y="46">1.00</text>
+          <text x="240" y="78">.81</text>
+          <text x="380" y="104">.66</text>
+          <text x="520" y="126">.53</text>
+          <text x="660" y="143">.43</text>
+          <text x="800" y="156">.35</text>
+        </g>
+        <g class="rotulo-min" font-size="34" fill="var(--tinta-suave)" text-anchor="middle">
+          <text x="100" y="278">1</text>
+          <text x="240" y="278">3</text>
+          <text x="380" y="278">5</text>
+          <text x="520" y="278">7</text>
+          <text x="660" y="278">9</text>
+          <text x="800" y="278">11</text>
+        </g>
+      </svg>
+    </div>
+    <p class="anotacion" style="text-align:center">Eje horizontal: dentro de cuántos pasos llega el premio. Altura: cuánto vale hoy, con <span class="v-gamma">γ</span> = 0.9.</p>
+    <div class="dos">
+      <article class="caja" data-color="naranja">
+        <h3 style="color:var(--naranja)">γ cercano a 0</h3>
+        <p>Solo cuenta el premio inmediato. El agente es <b>puro impulso</b>: nunca sacrificaría una pieza para ganar seis jugadas después.</p>
+      </article>
+      <article class="caja caja--b" data-color="verde">
+        <h3 style="color:var(--verde)">γ cercano a 1</h3>
+        <p>El futuro lejano casi pesa igual que el presente. El agente es <b>un estratega</b>: acepta perder ahora para ganar más tarde.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Política y funciones de valor">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 2 · Las dos formas de medir «lo bueno»
+      <span class="sub">El retorno <b>G</b> puntúa <em>una</em> partida concreta. Pero para aprender hace falta un número estable por estado y por acción — eso son <b>V</b> y <b>Q</b>, y es lo que los algoritmos guardan y mejoran.</span>
+    </h2>
+    <div class="tres">
+      <article class="caja" data-color="amarillo">
+        <h3 style="color:var(--amarillo)">π(a|s) · la política</h3>
+        <p>Su forma de comportarse: qué acción tomar en cada estado. <b>Es lo que queremos aprender.</b></p>
+      </article>
+      <article class="caja caja--b" data-color="azul">
+        <h3 style="color:var(--azul)">V(s) · valor del estado</h3>
+        <p>Cuánto futuro promete <b>estar aquí</b>, si sigo comportándome como me comporto.</p>
+      </article>
+      <article class="caja caja--c" data-color="morado">
+        <h3 style="color:var(--morado)">Q(s,a) · valor de la acción</h3>
+        <p>Cuánto futuro promete <b>hacer esto concreto</b> desde aquí, y luego seguir igual.</p>
+      </article>
+    </div>
+    <div class="caja" data-color="verde" style="transform:rotate(-.3deg)">
+      <p><span class="resalta">Q parece un detalle técnico y es la clave práctica.</span> Con solo <span class="v-estado">V</span> no puedes actuar: sabrías qué estados son buenos, pero no a cuál te lleva cada acción — para eso necesitarías el mapa del mundo. Con <span class="v-accion">Q</span> decides sin mapa: miras las acciones desde tu estado y eliges la de mayor valor.</p>
+      <p class="formula formula--peq" style="margin-top:.7em">π*(<span class="v-estado">s</span>) &nbsp;=&nbsp; arg max<sub style="font-size:.62em"><span class="v-accion">a</span></sub> &nbsp;Q*(<span class="v-estado">s</span>, <span class="v-accion">a</span>)</p>
+      <p class="anotacion" style="text-align:center;margin-top:.35em">«arg max» = la acción <span class="v-accion">a</span> que hace ese valor más grande — no el valor en sí, sino cuál lo logra.</p>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="La ecuación de Bellman">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 2 completo · La ecuación de Bellman
+      <span class="sub">Ya tenemos <b>V</b> y <b>Q</b>, pero ¿de dónde salen sus valores? De esta ecuación, que conecta el valor de un estado con el de los siguientes. Es el motor de todo el Paso 3.</span>
+    </h2>
+    <div class="caja" data-color="azul" style="transform:rotate(.25deg)">
+      <p class="formula">
+        <span class="v-estado">V*(s)</span> &nbsp;=&nbsp;
+        max<sub style="font-size:.62em"><span class="v-accion">a</span></sub>
+        &nbsp;[&nbsp; <span class="v-premio">r</span>
+        &nbsp;+&nbsp; <span class="v-gamma">γ</span> · <span class="v-estado">V*(s′)</span> &nbsp;]
+      </p>
+    </div>
+    <div class="dos">
+      <article class="caja" data-color="azul">
+        <h3 style="color:var(--azul)">Qué es cada símbolo</h3>
+        <div class="leyenda">
+          <div><b>V*(s)</b><span>Lo mejor a lo que puedo aspirar desde el estado <b>s</b>. El asterisco marca «lo óptimo».</span></div>
+          <div><b>max<sub>a</sub></b><span>Me quedo con la mejor de mis acciones. No promedio: elijo.</span></div>
+          <div><b>r</b><span>El premio inmediato, el que llega al instante.</span></div>
+          <div><b>γ</b><span>Cuánto pesa el futuro frente a ese premio inmediato.</span></div>
+          <div><b>V*(s′)</b><span>El valor del estado en el que acabo tras actuar.</span></div>
+        </div>
+      </article>
+      <article class="caja caja--b" data-color="amarillo">
+        <h3 style="color:var(--amarillo)">Qué dice la ecuación</h3>
+        <p><span class="resalta">Lo que vale estar aquí es el mejor premio que puedo obtener ahora, más lo que valga el sitio al que eso me lleve.</span></p>
+        <p style="margin-top:.45em">La intuición: para saber si una situación es buena <b>no hace falta imaginar la partida entera</b> — basta mirar un paso y confiar en el valor del siguiente. Y <b>V*</b> aparece a los dos lados: se define a sí misma, y eso es justo lo que permite calcularla poco a poco.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Programación dinámica">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 3, primera vía · Con mapa
+      <span class="sub">Con Bellman en la mano ya se puede buscar π*. Si además conoces las reglas del mundo (P y R), se resuelve sin jugar ni una partida, mediante <b>programación dinámica</b>: resolver un problema grande resolviendo antes sus partes pequeñas, sin repetir trabajo.</span>
+    </h2>
+    <div class="caja" data-color="azul" style="transform:rotate(-.25deg)">
+      <p><b>Iteración de valor.</b> Empieza con <span class="v-estado">V</span> = 0 en todos los estados. Aplica Bellman a todos, una y otra vez, hasta que los números dejen de moverse. Está demostrado que convergen al óptimo.</p>
+    </div>
+    <div class="dos">
+      <article class="caja" data-color="verde">
+        <h3 style="color:var(--verde)">Lo que gana</h3>
+        <ul class="lista lista--verde">
+          <li>Converge a la solución <b>óptima garantizada</b>.</li>
+          <li>No necesita jugar ni una sola partida.</li>
+        </ul>
+      </article>
+      <article class="caja caja--b" data-color="naranja">
+        <h3 style="color:var(--naranja)">Lo que cuesta</h3>
+        <ul class="lista lista--naranja">
+          <li>Exige <b>conocer P y R</b>: el manual completo del mundo. Casi nunca lo tienes.</li>
+          <li>Recorre <b>todos</b> los estados en cada pasada. El ajedrez tiene más posiciones que átomos hay en la Tierra.</li>
+        </ul>
+      </article>
+    </div>
+    <p class="anotacion" style="text-align:center">Es la base teórica de todo lo demás — y por eso mismo, rara vez la herramienta final.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Aprender de la experiencia">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 3, segunda vía · Sin mapa
+      <span class="sub">Pero casi nunca tienes P y R — era el tercer problema del principio. La única salida: jugar, observar y corregir. Dos maneras de hacerlo.</span>
+    </h2>
+    <div class="dos">
+      <article class="caja" data-color="naranja">
+        <span class="etiqueta" style="color:var(--naranja)">Monte Carlo</span>
+        <h3>Esperar al final</h3>
+        <p>El nombre viene del casino: como en una apuesta, <b>juegas el episodio completo</b> y usas el retorno que realmente ocurrió — es lo que pasó, sin suposiciones.</p>
+        <p class="pregunta" style="color:var(--naranja)">Certero, pero lento y muy variable.</p>
+      </article>
+      <article class="caja caja--b" data-color="verde">
+        <span class="etiqueta" style="color:var(--verde)">Diferencias temporales (TD)</span>
+        <h3>Corregir en cada paso</h3>
+        <p>No esperes al final: das un paso y <b>comparas lo que esperabas con lo que ocurrió</b> — esa diferencia entre instantes le da el nombre.</p>
+        <p class="pregunta" style="color:var(--verde)">Aprende sobre la marcha.</p>
+      </article>
+    </div>
+    <p class="anotacion" style="text-align:center">De estas dos ideas sale el algoritmo más conocido del área — y es el que vemos ahora.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Q-learning">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 3 · Q-learning
+      <span class="sub">Las diferencias temporales aplicadas a <b>Q</b>, el valor de cada acción. Es el algoritmo que permite alcanzar π* <em>sin conocer nunca</em> las reglas del mundo — por eso es el más usado.</span>
+    </h2>
+    <div class="caja" data-color="morado" style="transform:rotate(.2deg)">
+      <p class="formula formula--peq">
+        <span class="v-accion">Q(s,a)</span> &nbsp;←&nbsp; <span class="v-accion">Q(s,a)</span>
+        &nbsp;+&nbsp; α [ <span class="v-premio">r</span>
+        &nbsp;+&nbsp; <span class="v-gamma">γ</span> max<sub style="font-size:.62em">a′</sub> <span class="v-accion">Q(s′,a′)</span>
+        &nbsp;−&nbsp; <span class="v-accion">Q(s,a)</span> ]
+      </p>
+    </div>
+    <div class="dos">
+      <article class="caja" data-color="morado">
+        <h3 style="color:var(--morado)">Qué es cada símbolo</h3>
+        <div class="leyenda">
+          <div><b>Q(s,a)</b><span>Lo que el agente <em>cree</em> que vale hacer la acción <b>a</b> en el estado <b>s</b>. La flecha <b>←</b> significa «pasa a valer».</span></div>
+          <div><b>α</b><span>Cuánto se fía de cada experiencia nueva (entre 0 y 1).</span></div>
+          <div><b>r</b><span>La recompensa que acaba de recibir de verdad.</span></div>
+          <div><b>s′</b><span>El estado al que fue a parar tras la acción.</span></div>
+          <div><b>max Q(s′,a′)</b><span>Lo mejor que podrá lograr desde ese nuevo estado.</span></div>
+        </div>
+      </article>
+      <article class="caja caja--b" data-color="amarillo">
+        <h3 style="color:var(--amarillo)">Qué dice la ecuación</h3>
+        <p><span class="resalta">Corrige tu estimación un poco hacia lo que acabas de vivir.</span></p>
+        <p style="margin-top:.45em">El corchete es la <b>sorpresa</b>: lo que la experiencia sugiere que valía (<span class="v-premio">r</span> más lo que promete el estado siguiente) menos lo que creías. Si es cero, ya acertabas. Ese corchete es el <b>error de TD</b>, y α decide qué fracción se corrige.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Exploración frente a explotación">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Paso 3 · La pieza que falta
+      <span class="sub">Aprender jugando plantea una última pregunta: ¿el agente repite lo que ya le funciona, o prueba algo nuevo? Es la duda que anunciamos en el Momento 1 al hablar de respuestas que solo puntúan.</span>
+    </h2>
+    <div class="dos">
+      <article class="caja" data-color="azul">
+        <h3 style="color:var(--azul)">Explotar</h3>
+        <p>Usar lo mejor que conoces. Rinde hoy, <b>pero te ata a lo primero que funcionó</b>.</p>
+      </article>
+      <article class="caja caja--b" data-color="naranja">
+        <h3 style="color:var(--naranja)">Explorar</h3>
+        <p>Probar algo peor a propósito. Cuesta hoy, <b>y es la única vía a algo mejor</b>.</p>
+      </article>
+    </div>
+    <div class="caja" data-color="amarillo" style="transform:rotate(.25deg)">
+      <h3 style="color:var(--amarillo)">ε-greedy: la regla que reparte entre las dos</h3>
+      <p>Es la solución más usada, por lo simple que es. Antes de cada acción se lanza una moneda trucada: <b>con probabilidad ε</b> el agente actúa al azar (explora); <b>el resto de las veces</b> toma la acción de mayor <span class="v-accion">Q</span> (explota).</p>
+      <div class="leyenda" style="margin-top:.5em">
+        <div><b style="color:var(--naranja)">ε</b><span>Un número entre 0 y 1: la proporción de veces que prueba algo al azar. Se empieza alto —casi todo curiosidad, porque aún no sabe nada— y se baja a medida que <span class="v-accion">Q</span> se vuelve fiable.</span></div>
+      </div>
+      <p style="margin-top:.5em"><span class="resalta">Sin esta pieza, Q-learning se quedaría atrapado en el primer camino que funcionó.</span> Es lo que garantiza que el agente llegue a π* y no a una política mediocre.</p>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="2" aria-label="Comparación de las tres familias de métodos">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Cierre · El camino completo
+      <span class="sub"><b>Paso 1</b> nos dio el lenguaje (Markov → MDP). <b>Paso 2</b>, la forma de medir (retorno → V y Q → Bellman). <b>Paso 3</b>, las formas de buscar π* — estas tres. Ninguna es «la mejor»: cada una paga un precio distinto.</span>
+    </h2>
+    <div class="tabla-envoltorio">
+      <table class="comparativa">
+        <thead>
+          <tr><th scope="col">&nbsp;</th><th scope="col">Prog. dinámica</th><th scope="col">Monte Carlo</th><th scope="col">Dif. temporales</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">¿Necesita el mapa del mundo?</th><td class="no">Sí, entero</td><td class="si">No</td><td class="si">No</td></tr>
+          <tr><th scope="row">¿Espera a terminar el episodio?</th><td>No juega</td><td class="no">Sí</td><td class="si">No</td></tr>
+          <tr><th scope="row">¿Aprende de sus propias estimaciones?</th><td>Sí</td><td>No</td><td>Sí</td></tr>
+          <tr><th scope="row">Punto débil</th><td>No escala</td><td>Mucha variabilidad</td><td>Algo de sesgo</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="caja" data-color="morado" style="transform:rotate(-.2deg)">
+      <p><span class="resalta">Esto es Aprendizaje por Refuerzo, completo:</span> un agente que busca la política óptima π* de un Proceso de Decisión de Markov — con mapa (programación dinámica), o sin mapa, jugando y corrigiendo (Monte Carlo o diferencias temporales), mientras decide cuánto explorar y cuánto explotar lo aprendido. En la práctica, casi siempre gana la última: aprende sin manual y sin esperar al final.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ MOMENTO 3 ══════════ -->
+<section class="lamina divisor" data-momento="3" aria-label="Momento 3">
+  <div class="lienzo">
+    <span class="numero">3</span>
+    <h2>Un ejemplo<br>que ya conoces</h2>
+    <p class="lema">Agente, estados, acciones, recompensa, política — y también las tres dificultades. Todo lo del Momento 2 ocurre cada vez que alguien le enseña un truco a un perro: sin una sola ecuación, y mucho antes de que existieran los computadores.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="3" aria-label="Cómo aprende un perro">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Cómo aprende un perro
+      <span class="sub">Thorndike lo describió en 1898, mucho antes de que existiera un computador: <em>la conducta seguida de algo bueno tiende a repetirse</em>.</span>
+    </h2>
+    <div class="caja" data-color="morado" style="transform:rotate(-.25deg)">
+      <p>Nadie le explica al perro qué es «sentarse». <span class="resalta">Al perro no le dan instrucciones: le dan consecuencias.</span> Prueba cosas —ladrar, saltar, girar, sentarse—, y una de ellas trae galleta. Eso es feedback evaluativo puro, exactamente el de la lámina del principio.</p>
+    </div>
+    <div class="tabla-envoltorio">
+      <table class="comparativa">
+        <thead><tr><th scope="col">Cuando entrenas a un perro</th><th scope="col">En el MDP</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">El perro</th><td style="color:var(--morado);font-weight:800">el agente</td></tr>
+          <tr><th scope="row">Tú, la cocina, la hora que es</th><td style="color:var(--azul);font-weight:800">el entorno</td></tr>
+          <tr><th scope="row">Tu mano levantada, tu tono de voz</th><td style="color:var(--azul);font-weight:800">el estado · s</td></tr>
+          <tr><th scope="row">Sentarse, ladrar, salir corriendo</th><td style="color:var(--morado);font-weight:800">las acciones · a</td></tr>
+          <tr><th scope="row">La galleta (o el «no»)</th><td style="color:var(--verde);font-weight:800">la recompensa · r</td></tr>
+          <tr><th scope="row">Lo que el perro hace al ver tu mano</th><td style="color:var(--amarillo);font-weight:800">la política · π</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="lamina" data-momento="3" aria-label="Lo que sale mal al entrenar un perro">
+  <div class="lienzo lienzo--ancho">
+    <h2 class="titulo-lamina">Y lo que sale mal es lo mismo que sale mal en RL
+      <span class="sub">Los fallos del adiestramiento tienen nombre técnico. No es una metáfora: es el mismo problema.</span>
+    </h2>
+    <div class="tres">
+      <article class="caja" data-color="amarillo">
+        <span class="etiqueta" style="color:var(--amarillo)">Dificultad 1</span>
+        <h3>El premio llega tarde</h3>
+        <p>Le das la galleta 30 segundos después: entre medias el perro ladró, se rascó y giró. <b>El premio refuerza lo que no era.</b> Es el mismo problema del ajedrez, en el comedor de tu casa.</p>
+      </article>
+      <article class="caja caja--b" data-color="verde">
+        <span class="etiqueta" style="color:var(--verde)">Recompensa escasa</span>
+        <h3>Solo premias el truco entero</h3>
+        <p>Si esperas la voltereta completa, no llega nunca por azar. Hay que premiar <b>aproximaciones sucesivas</b> — ese truco tiene nombre técnico en RL: <i>reward shaping</i>, o simplemente <i>shaping</i>.</p>
+      </article>
+      <article class="caja caja--c" data-color="naranja">
+        <span class="etiqueta" style="color:var(--naranja)">Premiar lo que no era</span>
+        <h3>Aprende el atajo</h3>
+        <p>El perro se sienta <b>solo cuando ve la galleta</b>. Cumplió tu recompensa, no tu intención. En RL, <i>reward hacking</i>.</p>
+      </article>
+    </div>
+    <p class="anotacion" style="text-align:center">Diseñar la recompensa es la parte difícil. El algoritmo obedece la recompensa que escribiste, no la que querías escribir.</p>
+  </div>
+</section>
+
+<section class="lamina" data-momento="3" aria-label="Cierre: tres ideas para llevarse">
+  <div class="lienzo">
+    <h2 class="titulo-lamina">Tres ideas para llevarse</h2>
+    <div class="caja" data-color="morado" style="transform:rotate(-.3deg)">
+      <h3 style="color:var(--morado)">No aprende de respuestas, sino de consecuencias</h3>
+      <p>Nadie le dice al agente cuál era la acción correcta: solo le puntúan la que tomó. De ese detalle nace la necesidad de explorar.</p>
+    </div>
+    <div class="caja caja--b" data-color="azul">
+      <h3 style="color:var(--azul)">El MDP es el marco, Bellman es el motor</h3>
+      <p>Estados, acciones, recompensa y descuento. Con el mapa del mundo se resuelve con programación dinámica; sin él, con experiencia — Monte Carlo o diferencias temporales.</p>
+    </div>
+    <div class="caja caja--c" data-color="verde">
+      <h3 style="color:var(--verde)">Lo difícil casi nunca es el algoritmo</h3>
+      <p>Es escribir la recompensa correcta. El agente obedecerá al pie de la letra la que escribiste, no la que tenías en la cabeza.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<nav class="barra" aria-label="Navegación de la presentación">
+  <button class="boton" id="antes" type="button" aria-label="Lámina anterior">←</button>
+  <div class="puntos" id="puntos"></div>
+  <span class="contador" id="contador"></span>
+  <button class="boton" id="despues" type="button" aria-label="Lámina siguiente">→</button>
+</nav>
+
+<script>
+(function () {
+  var NOMBRES = {
+    '0': 'Portada',
+    '1': 'Momento 1 · Introducción',
+    '2': 'Momento 2 · Por dentro',
+    '3': 'Momento 3 · Ejemplos'
+  };
+
+  var laminas  = Array.prototype.slice.call(document.querySelectorAll('.lamina'));
+  var puntos   = document.getElementById('puntos');
+  var contador = document.getElementById('contador');
+  var rotulo   = document.getElementById('momentoActual');
+  var antes    = document.getElementById('antes');
+  var despues  = document.getElementById('despues');
+  var actual   = 0;
+
+  // Un grupo de puntos por momento, para que se vea la estructura de la charla.
+  var grupoActual = null, momentoPrevio = null;
+  laminas.forEach(function (lamina, i) {
+    var m = lamina.dataset.momento;
+    if (m !== momentoPrevio) {
+      grupoActual = document.createElement('div');
+      grupoActual.className = 'grupo-puntos';
+      puntos.appendChild(grupoActual);
+      momentoPrevio = m;
+    }
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Ir a la lámina ' + (i + 1) + ' · ' + NOMBRES[m]);
+    b.addEventListener('click', function () { ir(i); });
+    grupoActual.appendChild(b);
+  });
+
+  var botones = Array.prototype.slice.call(puntos.querySelectorAll('button'));
+
+  function ir(i) {
+    actual = Math.max(0, Math.min(laminas.length - 1, i));
+    laminas.forEach(function (lamina, n) {
+      lamina.classList.toggle('activa', n === actual);
+    });
+    botones.forEach(function (b, n) {
+      b.setAttribute('aria-current', n === actual ? 'true' : 'false');
+      b.setAttribute('data-visto', n < actual ? 'si' : 'no');
+    });
+    contador.textContent = (actual + 1) + ' / ' + laminas.length;
+    rotulo.textContent = NOMBRES[laminas[actual].dataset.momento];
+    antes.disabled   = actual === 0;
+    despues.disabled = actual === laminas.length - 1;
+    window.scrollTo(0, 0);
+  }
+
+  antes.addEventListener('click',   function () { ir(actual - 1); });
+  despues.addEventListener('click', function () { ir(actual + 1); });
+
+  document.addEventListener('keydown', function (e) {
+    var enBoton = e.target && e.target.closest && e.target.closest('button');
+    if (enBoton && (e.key === ' ' || e.key === 'Enter')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); ir(actual + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')                    { e.preventDefault(); ir(actual - 1); }
+    if (e.key === 'Home') { e.preventDefault(); ir(0); }
+    if (e.key === 'End')  { e.preventDefault(); ir(laminas.length - 1); }
+  });
+
+  var x0 = null;
+  document.addEventListener('touchstart', function (e) { x0 = e.changedTouches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var d = e.changedTouches[0].clientX - x0;
+    if (Math.abs(d) > 60) ir(actual + (d < 0 ? 1 : -1));
+    x0 = null;
+  }, { passive: true });
+
+  /* El manejador de clic del botón ◐ vive en el script del principio del
+     body, junto con el resto de la lógica de tema — así comparten el
+     mismo cierre y el observer sabe cuándo el clic fue "manual". */
+
+  ir(0);
+})();
+</script>
+</body>
+</html>

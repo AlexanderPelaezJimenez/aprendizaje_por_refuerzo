@@ -1,0 +1,774 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuaderno de Refuerzo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Nunito:ital,wght@0,400;0,700;0,900;1,600&family=Shantell+Sans:ital,wght@0,500;0,700;0,800;1,700&display=swap">
+<style>
+/* ─────────────────────────────────────────────
+   TOKENS — un solo lugar donde vive el color
+   ───────────────────────────────────────────── */
+:root {
+  color-scheme: light dark;
+
+  --papel:        #FCFBF8;
+  --papel-alto:   #FFFFFF;
+  --rejilla:      #E6E8EE;
+  --tinta:        #26242E;
+  --tinta-suave:  #5F5A6B;
+
+  /* Marcadores — cada uno con un rol fijo */
+  --morado:   #8A32AD;   /* el agente      */
+  --azul:     #1F6FD0;   /* el entorno     */
+  --verde:    #0E9160;   /* la recompensa  */
+  --amarillo: #D99A18;   /* lo destacado   */
+  --naranja:  #E05D22;   /* la exploración */
+
+  --morado-lav:   #F1E4F8;
+  --azul-lav:     #DFE9F8;
+  --verde-lav:    #DAEFE5;
+  --amarillo-lav: #F7EED8;
+  --naranja-lav:  #FAE6DB;
+
+  --sombra: rgba(38, 36, 46, .11);
+
+  --paso: clamp(.8rem, min(2.2vw, 3vh), 1.9rem);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel:       #17161E;
+    --papel-alto:  #201F2A;
+    --rejilla:     #2E2C3C;
+    --tinta:       #F3F0EA;
+    --tinta-suave: #ABA5B8;
+
+    --morado:   #C68CE2;
+    --azul:     #6BA6EE;
+    --verde:    #45C692;
+    --amarillo: #E0BE60;
+    --naranja:  #EC8B58;
+
+    --morado-lav:   #2E1E3A;
+    --azul-lav:     #182739;
+    --verde-lav:    #152E25;
+    --amarillo-lav: #332D1C;
+    --naranja-lav:  #37261C;
+
+    --sombra: rgba(0, 0, 0, .5);
+  }
+}
+
+:root[data-theme="dark"] {
+  --papel:       #17161E;
+  --papel-alto:  #201F2A;
+  --rejilla:     #2E2C3C;
+  --tinta:       #F3F0EA;
+  --tinta-suave: #ABA5B8;
+
+  --morado:   #C68CE2;
+  --azul:     #6BA6EE;
+  --verde:    #45C692;
+  --amarillo: #E0BE60;
+  --naranja:  #EC8B58;
+
+  --morado-lav:   #2E1E3A;
+  --azul-lav:     #182739;
+  --verde-lav:    #152E25;
+  --amarillo-lav: #332D1C;
+  --naranja-lav:  #37261C;
+
+  --sombra: rgba(0, 0, 0, .5);
+}
+
+/* ─────────────────────────────────────────────
+   BASE
+   ───────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+  font-size: clamp(.95rem, min(1.35vw, 2.1vh), 1.3rem);
+  line-height: 1.6;
+  color: var(--tinta);
+  background-color: var(--papel);
+  background-image:
+    linear-gradient(var(--rejilla) 1px, transparent 1px),
+    linear-gradient(90deg, var(--rejilla) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: -1px -1px;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, .letra-mano {
+  font-family: "Shantell Sans", "Comic Sans MS", cursive;
+  font-weight: 700;
+  line-height: 1.12;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.anotacion {
+  font-family: "Caveat", "Bradley Hand", cursive;
+  font-size: 1.55em;
+  line-height: 1.25;
+  color: var(--tinta-suave);
+}
+
+:focus-visible {
+  outline: 3px dashed var(--naranja);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   CAJAS DIBUJADAS A MANO
+   El radio irregular imita un trazo de marcador.
+   ───────────────────────────────────────────── */
+.caja {
+  border: 3px solid var(--tinta);
+  border-radius: 70px 14px 62px 16px / 16px 58px 14px 66px;
+  background: var(--papel-alto);
+  padding: calc(var(--paso) * 1.1) calc(var(--paso) * 1.3);
+  box-shadow: 3px 4px 0 var(--sombra);
+}
+.caja--b { border-radius: 14px 66px 16px 60px / 58px 16px 68px 14px; }
+.caja--c { border-radius: 58px 18px 54px 16px / 16px 56px 18px 60px; }
+
+.caja[data-color="morado"]   { border-color: var(--morado);     background: var(--morado-lav); }
+.caja[data-color="azul"]     { border-color: var(--azul);     background: var(--azul-lav); }
+.caja[data-color="verde"]    { border-color: var(--verde);    background: var(--verde-lav); }
+.caja[data-color="amarillo"] { border-color: var(--amarillo); background: var(--amarillo-lav); }
+.caja[data-color="naranja"]  { border-color: var(--naranja);  background: var(--naranja-lav); }
+
+/* Resaltador de marcador sobre una palabra */
+.resalta {
+  background-image: linear-gradient(transparent 60%, var(--amarillo-lav) 60%, var(--amarillo-lav) 93%, transparent 93%);
+  padding: 0 .12em;
+  font-weight: 800;
+}
+
+.etiqueta {
+  display: inline-block;
+  font-family: "Shantell Sans", cursive;
+  font-weight: 800;
+  font-size: .78em;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .3em .95em;
+  border: 2.5px solid currentColor;
+  border-radius: 44px 10px 40px 12px / 12px 38px 10px 42px;
+  transform: rotate(-0.8deg);
+}
+
+/* ─────────────────────────────────────────────
+   LÁMINAS (diapositivas)
+   ───────────────────────────────────────────── */
+.escenario { position: relative; }
+
+.lamina {
+  display: none;
+  min-height: 100vh;
+  /* El mínimo inferior (4.5rem) siempre supera la altura de la barra fija. */
+  padding: clamp(3.7rem, 7.5vh, 6rem) clamp(1.1rem, 5vw, 4rem) clamp(4.5rem, 8.5vh, 6rem);
+  flex-direction: column;
+  /* `flex-start` + `margin-block:auto` en el hijo centra cuando sobra sitio,
+     pero NUNCA desborda hacia arriba/abajo cuando falta — que es lo que hacía
+     `justify-content:center` y escondía texto bajo la barra fija. */
+  justify-content: flex-start;
+  align-items: center;
+}
+.lamina.activa { display: flex; }
+
+.lienzo {
+  width: 100%;
+  max-width: 1080px;
+  margin-block: auto;
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--paso) * 1.15);
+}
+.lienzo--ancho { max-width: 1200px; }
+
+/* Entrada escalonada de los hijos directos del lienzo */
+.lamina.activa .lienzo > * {
+  animation: entra .5s cubic-bezier(.22, 1, .36, 1) backwards;
+}
+.lamina.activa .lienzo > :nth-child(1) { animation-delay: .04s; }
+.lamina.activa .lienzo > :nth-child(2) { animation-delay: .13s; }
+.lamina.activa .lienzo > :nth-child(3) { animation-delay: .22s; }
+.lamina.activa .lienzo > :nth-child(4) { animation-delay: .31s; }
+.lamina.activa .lienzo > :nth-child(5) { animation-delay: .40s; }
+
+@keyframes entra {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ─────────────────────────────────────────────
+   PORTADA
+   ───────────────────────────────────────────── */
+.portada { text-align: center; align-items: center; }
+
+.portada h1 {
+  font-size: clamp(2.1rem, min(7.6vw, 10.5vh), 5.3rem);
+  font-weight: 800;
+  letter-spacing: -.015em;
+}
+.portada h1 .destaca { color: var(--morado); display: inline-block; transform: rotate(-1deg); }
+
+.portada .subtitulo {
+  font-size: clamp(1rem, min(2.4vw, 3.2vh), 1.6rem);
+  color: var(--tinta-suave);
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: .7rem; justify-content: center; }
+.chips .etiqueta:nth-child(1) { color: var(--morado); transform: rotate(-1.2deg); }
+.chips .etiqueta:nth-child(2) { color: var(--azul);   transform: rotate(0.7deg); }
+.chips .etiqueta:nth-child(3) { color: var(--verde);  transform: rotate(-0.5deg); }
+
+/* ─────────────────────────────────────────────
+   TÍTULOS DE SECCIÓN
+   ───────────────────────────────────────────── */
+.titulo-lamina { font-size: clamp(1.55rem, min(4.6vw, 6.2vh), 3.4rem); }
+.titulo-lamina .sub {
+  display: block;
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+  font-size: .42em;
+  color: var(--tinta-suave);
+  margin-top: .5em;
+  line-height: 1.45;
+}
+
+/* ─────────────────────────────────────────────
+   REJILLA DE TRES
+   ───────────────────────────────────────────── */
+.tres {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr));
+  gap: calc(var(--paso) * 1.1);
+  align-items: stretch;
+}
+.tres > .caja { display: flex; flex-direction: column; gap: .7rem; }
+.tres > .caja:nth-child(1) { transform: rotate(-.4deg); }
+.tres > .caja:nth-child(2) { transform: rotate(.25deg); }
+.tres > .caja:nth-child(3) { transform: rotate(-.2deg); }
+
+.tres h3 { font-size: 1.32em; }
+.tres p  { margin: 0; font-size: .95em; }
+.tres .pregunta {
+  margin-top: auto;
+  padding-top: .8rem;
+  border-top: 2.5px dashed currentColor;
+  font-family: "Caveat", cursive;
+  font-size: 1.5em;
+  line-height: 1.2;
+}
+.tres svg { width: 100%; height: clamp(56px, 9.5vh, 92px); }
+
+.tres > :nth-child(1) { color: var(--azul); }
+.tres > :nth-child(2) { color: var(--naranja); }
+.tres > :nth-child(3) { color: var(--morado); }
+.tres p, .tres h3 { color: var(--tinta); }
+
+/* ─────────────────────────────────────────────
+   BAM
+   ───────────────────────────────────────────── */
+.bam { text-align: center; align-items: center; gap: .4rem; }
+.bam-marco { position: relative; display: inline-grid; place-items: center; padding: 1.4rem; }
+.bam-marco svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.bam-texto {
+  position: relative;
+  font-family: "Shantell Sans", cursive;
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(2.1rem, min(9vw, 12.5vh), 6.2rem);
+  color: var(--morado);
+  transform: rotate(-2.5deg);
+  letter-spacing: -.02em;
+  -webkit-text-stroke: 1.5px var(--tinta);
+  paint-order: stroke fill;
+}
+.lamina.activa .bam-texto { animation: golpe .55s cubic-bezier(.3, 1.7, .5, 1) .25s backwards; }
+@keyframes golpe {
+  from { opacity: 0; transform: rotate(-2.5deg) scale(.65); }
+  60%  { opacity: 1; transform: rotate(-2.5deg) scale(1.06); }
+  to   { opacity: 1; transform: rotate(-2.5deg) scale(1); }
+}
+
+/* ─────────────────────────────────────────────
+   DIAGRAMAS
+   ───────────────────────────────────────────── */
+.diagrama { width: 100%; }
+/* El tope de altura evita que un diagrama alto empuje al resto de la lámina
+   fuera de la pantalla. El viewBox reescala solo, sin deformarse. */
+.diagrama svg { width: 100%; height: auto; max-height: 36vh; display: block; margin-inline: auto; }
+
+.trazo      { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.rotulo     { font-family: "Shantell Sans", cursive; font-weight: 800; }
+.rotulo-min { font-family: "Caveat", cursive; font-weight: 700; }
+
+.flujo { stroke-dasharray: 13 11; animation: fluye 2.3s linear infinite; }
+@keyframes fluye { to { stroke-dashoffset: -48; } }
+
+.menea { transform-origin: 62px 108px; animation: menear 1.4s ease-in-out infinite alternate; }
+@keyframes menear { from { transform: rotate(-7deg); } to { transform: rotate(9deg); } }
+
+/* ─────────────────────────────────────────────
+   FÓRMULA
+   ───────────────────────────────────────────── */
+.formula {
+  text-align: center;
+  font-size: clamp(1.05rem, min(3.1vw, 4.2vh), 2.1rem);
+  font-family: "Nunito", serif;
+  font-weight: 700;
+  margin: 0;
+  overflow-x: auto;
+  padding: .5em .2em;
+}
+.formula .v-estado  { color: var(--azul); }
+.formula .v-premio  { color: var(--verde); }
+.formula .v-gamma   { color: var(--naranja); }
+.formula .v-accion  { color: var(--morado); }
+
+.leyenda { display: grid; gap: .55rem; margin: 0; font-size: .95em; }
+.leyenda div { display: flex; gap: .7rem; align-items: baseline; }
+.leyenda b { font-weight: 900; min-width: 2.6em; }
+
+/* ─────────────────────────────────────────────
+   PALETA
+   ───────────────────────────────────────────── */
+.paleta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 172px), 1fr));
+  gap: 1rem;
+}
+.muestra {
+  border: 3px solid var(--tinta);
+  border-radius: 52px 12px 46px 14px / 14px 44px 12px 50px;
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.muestra .punto {
+  width: 2.5rem; height: 2.5rem;
+  border-radius: 55% 45% 52% 48% / 48% 52% 48% 52%;
+  border: 3px solid var(--tinta);
+  margin-bottom: .35rem;
+}
+.muestra .nombre { font-family: "Shantell Sans", cursive; font-weight: 800; font-size: 1.05em; }
+.muestra .papel  { font-size: .85em; color: var(--tinta-suave); line-height: 1.35; }
+
+/* ─────────────────────────────────────────────
+   BARRA DE NAVEGACIÓN
+   ───────────────────────────────────────────── */
+.barra {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(.5rem, 2vw, 1.1rem);
+  padding: .7rem clamp(.7rem, 3vw, 1.6rem);
+  background: color-mix(in srgb, var(--papel) 90%, transparent);
+  backdrop-filter: blur(9px);
+  border-top: 2.5px solid var(--rejilla);
+}
+
+.boton {
+  font: inherit;
+  font-family: "Shantell Sans", cursive;
+  font-weight: 800;
+  color: var(--tinta);
+  background: var(--papel-alto);
+  border: 2.5px solid var(--tinta);
+  border-radius: 40px 12px 36px 14px / 12px 34px 14px 38px;
+  padding: .3em .95em;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--sombra);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.boton:hover  { transform: translate(-1px, -1px); box-shadow: 4px 5px 0 var(--sombra); }
+.boton:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--sombra); }
+.boton[disabled] { opacity: .35; cursor: default; transform: none; box-shadow: 3px 3px 0 var(--sombra); }
+
+.puntos { display: flex; gap: .45rem; }
+.puntos button {
+  width: 13px; height: 13px; padding: 0;
+  border: 2.5px solid var(--tinta);
+  border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%;
+  background: transparent;
+  cursor: pointer;
+  transition: background .18s ease, transform .18s ease;
+}
+.puntos button[aria-current="true"] { background: var(--morado); transform: scale(1.25); }
+
+.contador {
+  font-family: "Shantell Sans", cursive;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--tinta-suave);
+  font-size: .9rem;
+  min-width: 4.2ch;
+  text-align: center;
+}
+
+.pista {
+  position: fixed;
+  top: 1.1rem; right: 1.1rem;
+  z-index: 20;
+  display: flex; gap: .5rem; align-items: center;
+}
+.pista .anotacion { font-size: 1.25rem; }
+
+@media (max-width: 620px) {
+  .pista .anotacion { display: none; }
+  .contador { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
+</style>
+
+<div class="escenario" id="escenario">
+
+  <!-- ══ 1. PORTADA ══ -->
+  <section class="lamina portada activa" aria-label="Portada">
+    <div class="lienzo">
+      <div class="chips">
+        <span class="etiqueta">Muestra de estilo</span>
+        <span class="etiqueta">Borrador 1</span>
+        <span class="etiqueta">Agosto 2026</span>
+      </div>
+      <h1>Aprendizaje<br>por <span class="destaca">Refuerzo</span></h1>
+      <p class="subtitulo">Cómo una máquina aprende sin que nadie le diga la respuesta correcta.</p>
+      <!-- El tope en vh (34vh de ancho ≈ 21vh de alto, viewBox 300x190) evita
+           que el dibujo empuje el título fuera en pantallas bajas. -->
+      <div class="diagrama" style="max-width:min(300px, 42vw, 34vh);margin-inline:auto">
+        <svg viewBox="0 0 300 190" role="img" aria-label="Un perro dibujado a mano junto a un premio">
+          <!-- suelo -->
+          <path class="trazo" d="M18 168 q 70 -7 132 -1 t 132 -3" stroke="var(--rejilla)" stroke-width="5"/>
+          <!-- cola -->
+          <g class="menea">
+            <path class="trazo" d="M62 108 q -26 -12 -30 -38" stroke="var(--tinta)" stroke-width="7"/>
+          </g>
+          <!-- cuerpo -->
+          <path class="trazo" d="M62 110 q -4 -40 40 -44 q 46 -4 62 6 q 8 4 10 22 q 2 22 -8 34 q -50 12 -96 4 q -8 -6 -8 -22 z"
+                fill="var(--morado-lav)" stroke="var(--morado)" stroke-width="6"/>
+          <!-- patas -->
+          <path class="trazo" d="M80 140 v 26 M108 143 v 23 M140 143 v 23 M166 138 v 28" stroke="var(--morado)" stroke-width="6"/>
+          <!-- cabeza -->
+          <path class="trazo" d="M172 78 q 4 -30 30 -32 q 30 -2 34 26 q 3 26 -18 32 q -28 6 -42 -8 q -5 -8 -4 -18 z"
+                fill="var(--morado-lav)" stroke="var(--morado)" stroke-width="6"/>
+          <!-- oreja -->
+          <path class="trazo" d="M182 54 q -16 6 -14 30 q 12 4 18 -8" fill="var(--morado)" stroke="var(--morado)" stroke-width="5"/>
+          <!-- hocico -->
+          <path class="trazo" d="M232 82 q 22 -2 26 12 q 2 12 -14 14 q -14 2 -18 -8" fill="var(--papel-alto)" stroke="var(--morado)" stroke-width="5"/>
+          <circle cx="255" cy="90" r="5" fill="var(--tinta)"/>
+          <circle cx="212" cy="70" r="4.5" fill="var(--tinta)"/>
+          <!-- premio -->
+          <g transform="translate(30,132) rotate(-14)">
+            <path class="trazo" d="M6 12 h 34" stroke="var(--verde)" stroke-width="11"/>
+            <circle cx="6"  cy="6"  r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+            <circle cx="6"  cy="18" r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+            <circle cx="42" cy="6"  r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+            <circle cx="42" cy="18" r="7" fill="var(--verde-lav)" stroke="var(--verde)" stroke-width="4"/>
+          </g>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 2. LOS TRES APRENDIZAJES ══ -->
+  <section class="lamina" aria-label="Los tres tipos de aprendizaje">
+    <div class="lienzo lienzo--ancho">
+      <h2 class="titulo-lamina">Ya conoces dos de los tres
+        <span class="sub">Cada tipo de aprendizaje responde a una pregunta distinta. Empecemos por las que ya te suenan.</span>
+      </h2>
+      <div class="tres">
+
+        <article class="caja" data-color="azul">
+          <svg viewBox="0 0 120 76" role="img" aria-label="Puntos etiquetados separados por una línea">
+            <path class="trazo" d="M14 60 q 40 -46 92 -44" stroke="var(--azul)" stroke-width="4.5"/>
+            <circle cx="30" cy="30" r="8" fill="var(--azul)"/>
+            <circle cx="52" cy="20" r="8" fill="var(--azul)"/>
+            <circle cx="42" cy="58" r="8" fill="none" stroke="var(--azul)" stroke-width="4"/>
+            <circle cx="76" cy="56" r="8" fill="none" stroke="var(--azul)" stroke-width="4"/>
+            <path class="trazo" d="M92 22 l 7 8 l 14 -17" stroke="var(--verde)" stroke-width="5"/>
+          </svg>
+          <span class="etiqueta">Supervisado</span>
+          <h3>Con respuestas</h3>
+          <p>Le mostramos miles de ejemplos <em>ya resueltos</em>. Aprende a copiar la etiqueta correcta.</p>
+          <p class="pregunta">«¿Qué es esto?»</p>
+        </article>
+
+        <article class="caja caja--b" data-color="naranja">
+          <svg viewBox="0 0 120 76" role="img" aria-label="Dos grupos de puntos rodeados">
+            <path class="trazo" d="M12 34 q 4 -22 24 -20 q 20 2 18 22 q -2 18 -22 18 q -22 0 -20 -20 z" stroke="var(--naranja)" stroke-width="4.5"/>
+            <path class="trazo" d="M66 46 q 2 -26 24 -24 q 22 2 20 22 q -2 18 -22 18 q -24 0 -22 -16 z" stroke="var(--naranja)" stroke-width="4.5"/>
+            <circle cx="26" cy="30" r="5.5" fill="var(--naranja)"/>
+            <circle cx="40" cy="38" r="5.5" fill="var(--naranja)"/>
+            <circle cx="32" cy="44" r="5.5" fill="var(--naranja)"/>
+            <circle cx="82" cy="42" r="5.5" fill="var(--naranja)"/>
+            <circle cx="94" cy="50" r="5.5" fill="var(--naranja)"/>
+            <circle cx="86" cy="56" r="5.5" fill="var(--naranja)"/>
+          </svg>
+          <span class="etiqueta">No supervisado</span>
+          <h3>Sin respuestas</h3>
+          <p>Solo hay datos, ninguna etiqueta. Busca por su cuenta <em>qué se parece a qué</em>.</p>
+          <p class="pregunta">«¿Qué hay aquí dentro?»</p>
+        </article>
+
+        <article class="caja caja--c" data-color="morado">
+          <svg viewBox="0 0 120 76" role="img" aria-label="Huellas que avanzan hacia una estrella">
+            <path class="trazo flujo" d="M10 64 q 24 6 36 -12 q 12 -18 32 -10" stroke="var(--morado)" stroke-width="4.5"/>
+            <circle cx="10" cy="64" r="6" fill="var(--morado)"/>
+            <circle cx="46" cy="52" r="5" fill="var(--morado)" opacity=".55"/>
+            <circle cx="78" cy="42" r="5" fill="var(--morado)" opacity=".8"/>
+            <path d="M99 6 l 4.5 10.5 l 11.5 1 l -8.7 7.8 l 2.6 11.3 l -9.9 -6.1 l -9.9 6.1 l 2.6 -11.3 l -8.7 -7.8 l 11.5 -1 z"
+                  fill="var(--amarillo)" stroke="var(--tinta)" stroke-width="2.5" stroke-linejoin="round"/>
+          </svg>
+          <span class="etiqueta">Por refuerzo</span>
+          <h3>Con consecuencias</h3>
+          <p>Nadie da la respuesta. Prueba, recibe premio o castigo, y <em>ajusta su conducta</em>.</p>
+          <p class="pregunta">«¿Qué me conviene hacer?»</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 3. EL BUCLE ══ -->
+  <section class="lamina" aria-label="El bucle agente y entorno">
+    <div class="lienzo lienzo--ancho">
+      <h2 class="titulo-lamina">Todo el Aprendizaje por Refuerzo cabe en este bucle
+        <span class="sub">El agente actúa. El mundo responde. El agente aprende. Y vuelta a empezar — miles de veces.</span>
+      </h2>
+
+      <div class="diagrama">
+        <!-- Geometría verificada: nada de texto toca un trazo ni se sale del viewBox.
+             Ápice curva superior y≈125 · etiquetas superiores terminan en y≈99
+             Ápice curva inferior y≈319 · etiquetas inferiores empiezan en y≈361 -->
+        <svg viewBox="0 0 900 430" role="img" aria-label="Diagrama del bucle: el agente ejecuta una acción sobre el entorno, y el entorno le devuelve un nuevo estado y una recompensa">
+          <defs>
+            <marker id="pta-morado" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M1 1 L11 6 L1 11 z" fill="var(--morado)"/>
+            </marker>
+            <marker id="pta-azul" viewBox="0 0 12 12" refX="9" refY="6" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M1 1 L11 6 L1 11 z" fill="var(--azul)"/>
+            </marker>
+          </defs>
+
+          <!-- acción: etiquetas por ENCIMA del ápice de la curva -->
+          <text class="rotulo" x="450" y="56" text-anchor="middle" font-size="32" fill="var(--morado)">acción</text>
+          <text class="rotulo-min" x="450" y="92" text-anchor="middle" font-size="26" fill="var(--tinta-suave)">«giro a la izquierda»</text>
+          <path class="trazo flujo" d="M334 188 C 400 104, 500 104, 560 186"
+                stroke="var(--morado)" stroke-width="6" marker-end="url(#pta-morado)"/>
+
+          <!-- AGENTE -->
+          <g transform="rotate(-0.6 195 222)">
+            <rect x="60" y="162" width="270" height="120" rx="26"
+                  fill="var(--morado-lav)" stroke="var(--morado)" stroke-width="6"/>
+            <text class="rotulo" x="195" y="214" text-anchor="middle" font-size="40" fill="var(--tinta)">AGENTE</text>
+            <text class="rotulo-min" x="195" y="250" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">el que aprende</text>
+          </g>
+
+          <!-- ENTORNO -->
+          <g transform="rotate(0.6 705 222)">
+            <rect x="570" y="162" width="270" height="120" rx="26"
+                  fill="var(--azul-lav)" stroke="var(--azul)" stroke-width="6"/>
+            <text class="rotulo" x="705" y="214" text-anchor="middle" font-size="40" fill="var(--tinta)">ENTORNO</text>
+            <text class="rotulo-min" x="705" y="250" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">el mundo</text>
+          </g>
+
+          <!-- nuevo estado + recompensa: viajan juntos por la misma flecha -->
+          <path class="trazo flujo" d="M566 256 C 500 340, 400 340, 340 258"
+                stroke="var(--azul)" stroke-width="6" marker-end="url(#pta-azul)"/>
+          <text class="rotulo" x="450" y="384" text-anchor="middle" font-size="32"><tspan fill="var(--azul)">nuevo estado</tspan><tspan fill="var(--tinta-suave)"> + </tspan><tspan fill="var(--verde)">recompensa</tspan></text>
+          <text class="rotulo-min" x="450" y="418" text-anchor="middle" font-size="26" fill="var(--tinta-suave)">«dónde estoy · qué tal lo hice»</text>
+        </svg>
+      </div>
+
+      <div class="caja" data-color="amarillo" style="transform:rotate(-.3deg)">
+        <p style="margin:0"><span class="resalta">La recompensa es todo lo que el agente recibe.</span> No hay etiquetas, no hay manual, no hay ejemplos resueltos. Solo un número que dice «esto estuvo bien» o «esto estuvo mal» — y llega tarde, a veces cientos de pasos después de la decisión que lo causó.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══ 4. BAM ══ -->
+  <section class="lamina" aria-label="Momento de énfasis">
+    <div class="lienzo bam">
+      <p class="anotacion" style="font-size:1.6rem">Y cuando por fin encaja la idea...</p>
+      <div class="bam-marco">
+        <svg viewBox="0 0 600 300" aria-hidden="true">
+          <path d="M300 8 l 34 62 l 68 -38 l -18 74 l 74 -8 l -52 54 l 66 34 l -74 22 l 40 62 l -76 -22 l -6 76 l -48 -60 l -48 60 l -6 -76 l -76 22 l 40 -62 l -74 -22 l 66 -34 l -52 -54 l 74 8 l -18 -74 l 68 38 z"
+                fill="var(--amarillo-lav)" stroke="var(--amarillo)" stroke-width="6" stroke-linejoin="round"/>
+        </svg>
+        <span class="bam-texto">¡BAM!</span>
+      </div>
+      <p style="max-width:44ch;margin-inline:auto">Los momentos clave se celebran. Este estilo usa una explosión cuando una idea difícil por fin queda clara.</p>
+    </div>
+  </section>
+
+  <!-- ══ 5. LO TÉCNICO ══ -->
+  <section class="lamina" aria-label="Tratamiento de contenido técnico">
+    <div class="lienzo">
+      <h2 class="titulo-lamina">Y cuando toca ponerse técnico
+        <span class="sub">Las fórmulas también se dibujan. Cada símbolo lleva el color de lo que representa, y debajo va su traducción al castellano.</span>
+      </h2>
+
+      <div class="caja" data-color="azul" style="transform:rotate(.25deg)">
+        <p class="formula">
+          <span class="v-estado">V(s)</span>
+          &nbsp;=&nbsp;
+          max<sub style="font-size:.6em"><span class="v-accion">a</span></sub>
+          &nbsp;[&nbsp;<span class="v-premio">r</span>
+          &nbsp;+&nbsp;
+          <span class="v-gamma">γ</span>&nbsp;·&nbsp;<span class="v-estado">V(s′)</span>&nbsp;]
+        </p>
+      </div>
+
+      <div class="leyenda">
+        <div><b style="color:var(--azul)">V(s)</b><span>Lo bueno que es estar aquí, contando todo lo que vendrá después.</span></div>
+        <div><b style="color:var(--morado)">a</b><span>La acción que elijo. Me quedo con la mejor de todas.</span></div>
+        <div><b style="color:var(--verde)">r</b><span>El premio que recibo ahora mismo, al instante.</span></div>
+        <div><b style="color:var(--naranja)">γ</b><span>Cuánto me importa el futuro. Entre 0 (nada) y 1 (muchísimo).</span></div>
+      </div>
+
+      <p class="anotacion" style="text-align:right;transform:rotate(-1deg)">↑ la ecuación de Bellman, sin susto</p>
+    </div>
+  </section>
+
+  <!-- ══ 6. PALETA ══ -->
+  <section class="lamina" aria-label="Paleta de color">
+    <div class="lienzo lienzo--ancho">
+      <h2 class="titulo-lamina">Cada color significa una cosa
+        <span class="sub">No son adornos: el color es información. Si algo es morado, en toda la presentación es el agente.</span>
+      </h2>
+      <div class="paleta">
+        <div class="muestra" style="border-color:var(--morado)">
+          <span class="punto" style="background:var(--morado);border-color:var(--morado)"></span>
+          <span class="nombre" style="color:var(--morado)">Morado</span>
+          <span class="papel">El agente. Quien decide y aprende.</span>
+        </div>
+        <div class="muestra" style="border-color:var(--azul)">
+          <span class="punto" style="background:var(--azul);border-color:var(--azul)"></span>
+          <span class="nombre" style="color:var(--azul)">Azul</span>
+          <span class="papel">El entorno y los estados. El mundo.</span>
+        </div>
+        <div class="muestra" style="border-color:var(--verde)">
+          <span class="punto" style="background:var(--verde);border-color:var(--verde)"></span>
+          <span class="nombre" style="color:var(--verde)">Verde</span>
+          <span class="papel">La recompensa. Lo que sale bien.</span>
+        </div>
+        <div class="muestra" style="border-color:var(--naranja)">
+          <span class="punto" style="background:var(--naranja);border-color:var(--naranja)"></span>
+          <span class="nombre" style="color:var(--naranja)">Naranja</span>
+          <span class="papel">La exploración. Probar algo nuevo.</span>
+        </div>
+        <div class="muestra" style="border-color:var(--amarillo)">
+          <span class="punto" style="background:var(--amarillo);border-color:var(--amarillo)"></span>
+          <span class="nombre" style="color:#8A6A16">Amarillo</span>
+          <span class="papel">Lo destacado. Subrayados y avisos.</span>
+        </div>
+      </div>
+      <p class="anotacion">Tipografías: <b>Shantell Sans</b> en títulos · <b>Nunito</b> en el cuerpo · <b>Caveat</b> para las notas al margen, como esta.</p>
+    </div>
+  </section>
+
+</div>
+
+<div class="pista">
+  <span class="anotacion">usa ← → para navegar</span>
+  <button class="boton" id="tema" type="button" aria-label="Cambiar entre modo claro y oscuro">◐</button>
+</div>
+
+<nav class="barra" aria-label="Navegación de la presentación">
+  <button class="boton" id="antes" type="button" aria-label="Lámina anterior">←</button>
+  <div class="puntos" id="puntos"></div>
+  <span class="contador" id="contador"></span>
+  <button class="boton" id="despues" type="button" aria-label="Lámina siguiente">→</button>
+</nav>
+
+<script>
+(function () {
+  var laminas  = Array.prototype.slice.call(document.querySelectorAll('.lamina'));
+  var puntos   = document.getElementById('puntos');
+  var contador = document.getElementById('contador');
+  var antes    = document.getElementById('antes');
+  var despues  = document.getElementById('despues');
+  var actual   = 0;
+
+  laminas.forEach(function (lamina, i) {
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', 'Ir a la lámina ' + (i + 1));
+    b.addEventListener('click', function () { ir(i); });
+    puntos.appendChild(b);
+  });
+
+  function ir(i) {
+    actual = Math.max(0, Math.min(laminas.length - 1, i));
+    laminas.forEach(function (lamina, n) {
+      lamina.classList.toggle('activa', n === actual);
+    });
+    Array.prototype.forEach.call(puntos.children, function (b, n) {
+      b.setAttribute('aria-current', n === actual ? 'true' : 'false');
+    });
+    contador.textContent = (actual + 1) + ' / ' + laminas.length;
+    antes.disabled   = actual === 0;
+    despues.disabled = actual === laminas.length - 1;
+    window.scrollTo(0, 0);
+  }
+
+  antes.addEventListener('click',   function () { ir(actual - 1); });
+  despues.addEventListener('click', function () { ir(actual + 1); });
+
+  document.addEventListener('keydown', function (e) {
+    var enBoton = e.target && e.target.closest && e.target.closest('button');
+    if (enBoton && (e.key === ' ' || e.key === 'Enter')) return;
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); ir(actual + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'PageUp')                    { e.preventDefault(); ir(actual - 1); }
+    if (e.key === 'Home') { e.preventDefault(); ir(0); }
+    if (e.key === 'End')  { e.preventDefault(); ir(laminas.length - 1); }
+  });
+
+  var x0 = null;
+  document.addEventListener('touchstart', function (e) { x0 = e.changedTouches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var d = e.changedTouches[0].clientX - x0;
+    if (Math.abs(d) > 60) ir(actual + (d < 0 ? 1 : -1));
+    x0 = null;
+  }, { passive: true });
+
+  /* Tema: sigue al sistema hasta que alguien lo cambia a mano. */
+  var raiz  = document.documentElement;
+  var oscuro = window.matchMedia('(prefers-color-scheme: dark)');
+  document.getElementById('tema').addEventListener('click', function () {
+    var esOscuro = raiz.getAttribute('data-theme')
+      ? raiz.getAttribute('data-theme') === 'dark'
+      : oscuro.matches;
+    raiz.setAttribute('data-theme', esOscuro ? 'light' : 'dark');
+  });
+
+  ir(0);
+})();
+</script>
+</body>
+</html>

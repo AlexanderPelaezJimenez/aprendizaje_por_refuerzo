@@ -1,0 +1,12 @@
+# Configuración y memoria del asistente (local, no se comparte)
+.claude/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Salida generada por construir.py
+publicable.html
+
+# macOS
+.DS_Store
