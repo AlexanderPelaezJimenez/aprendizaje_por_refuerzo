@@ -58,7 +58,7 @@
   <div class="lienzo">
     <p class="creditos">Ingeniería de Sistemas Autoadaptables · Universidad EAFIT</p>
     <h1>Aprendizaje<br>por <span class="destaca">Refuerzo</span></h1>
-    <p class="subtitulo">Nadie le dice qué hacer. Nadie le dice si lo hizo bien. Aprende de todos modos.</p>
+    <p class="subtitulo">Aprender a decidir a partir de las consecuencias, sin instrucciones ni respuestas correctas.</p>
     <div class="diagrama" style="max-width:min(300px, 42vw, 34vh);margin-inline:auto">
       <svg viewBox="0 0 300 190" role="img" aria-label="Un perro dibujado a mano junto a un premio">
         <path class="trazo" d="M18 168 q 70 -7 132 -1 t 132 -3" stroke="var(--rejilla)" stroke-width="5"/>
@@ -93,14 +93,14 @@
   <div class="lienzo">
     <span class="numero">1</span>
     <h2>Tres formas<br>de aprender</h2>
-    <p class="lema">Empezamos por dos que quizás ya conozcas —supervisado y no supervisado— y una tercera que seguramente no: el refuerzo. Verlas juntas es la forma más rápida de entender qué tiene de distinto.</p>
+    <p class="lema">Empezamos por dos que quizás ya conozcas, el supervisado y el no supervisado, y una tercera que seguramente no, el refuerzo. Verlas juntas es la forma más rápida de entender qué distingue a esta última.</p>
   </div>
 </section>
 
 <section class="lamina" data-momento="1" aria-label="Los tres tipos de aprendizaje">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">Tres formas de aprender
-      <span class="sub">Cada familia responde a una pregunta distinta. Puede que las dos primeras ya te suenen — la tercera es la protagonista de hoy.</span>
+      <span class="sub">Cada familia responde a una pregunta distinta; la tercera es la que nos ocupa hoy.</span>
     </h2>
     <div class="tres">
       <article class="caja" data-color="azul" style="color:var(--azul)">
@@ -155,8 +155,8 @@
 
 <section class="lamina" data-momento="1" aria-label="Qué comparten el aprendizaje supervisado y el no supervisado">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">Los dos primeros se parecen más de lo que parece
-      <span class="sub">Discuten sobre si hay etiquetas o no. Pero comparten tres supuestos de fondo, y el refuerzo rompe los tres.</span>
+    <h2 class="titulo-lamina">Qué comparten el supervisado y el no supervisado
+      <span class="sub">Se diferencian en si hay etiquetas o no, pero comparten tres supuestos de fondo que el refuerzo rompe.</span>
     </h2>
     <div class="dos">
       <article class="caja" data-color="azul">
@@ -182,15 +182,15 @@
 
 <section class="lamina" data-momento="1" aria-label="Feedback instructivo frente a evaluativo">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">La diferencia que lo cambia todo
-      <span class="sub">No está en los datos, sino en el tipo de respuesta que recibe el que aprende: el supervisado y el no supervisado reciben una; el refuerzo, la otra.</span>
+    <h2 class="titulo-lamina">Feedback instructivo frente a evaluativo
+      <span class="sub">No está en los datos, sino en lo que recibe de vuelta el que aprende. El refuerzo recibe una <b>nota</b> sobre lo que hizo (evaluativo); los otros dos reciben la respuesta o nada, pero nunca una nota que lo empuje a explorar.</span>
     </h2>
     <div class="dos">
       <article class="caja" data-color="azul">
-        <span class="etiqueta" style="color:var(--azul)">Instructivo</span>
+        <span class="etiqueta" style="color:var(--azul)">Instructivo · o sin señal</span>
         <h3>«La respuesta era: gato»</h3>
-        <p>Así aprenden el <b>supervisado</b> y el <b>no supervisado</b>: te dicen qué debías haber hecho, sin importar lo que hiciste. La corrección viene ya resuelta.</p>
-        <p class="pregunta" style="color:var(--azul)">No hace falta probar nada más.</p>
+        <p>El <b>supervisado</b> recibe la respuesta correcta, ya resuelta. El <b>no supervisado</b> no recibe ninguna: solo busca estructura en los datos. En ninguno de los dos el que aprende descubre algo <b>probando</b>.</p>
+        <p class="pregunta" style="color:var(--azul)">No hace falta explorar.</p>
       </article>
       <article class="caja caja--b" data-color="morado">
         <span class="etiqueta" style="color:var(--morado)">Evaluativo</span>
@@ -200,15 +200,15 @@
       </article>
     </div>
     <div class="caja" data-color="amarillo" style="transform:rotate(-.3deg)">
-      <p><span class="resalta">La única forma de averiguarlo es probarlo.</span> Por eso la exploración no es un truco que alguien añadió al algoritmo: es la consecuencia inevitable de recibir notas en vez de respuestas. Volveremos a esto.</p>
+      <p><span class="resalta">La única forma de averiguarlo es probar.</span> Por eso la exploración no es un añadido opcional del algoritmo, sino una consecuencia de recibir notas en vez de respuestas. Se retoma más adelante.</p>
     </div>
   </div>
 </section>
 
 <section class="lamina" data-momento="1" aria-label="El bucle entre agente y entorno">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">Todo el Aprendizaje por Refuerzo cabe en este bucle
-      <span class="sub">El agente actúa. El mundo responde. El agente aprende. Y vuelta a empezar — miles de veces.</span>
+    <h2 class="titulo-lamina">El bucle que se ejecuta en el Aprendizaje por Refuerzo
+      <span class="sub">El agente actúa, el entorno responde y el agente aprende; el ciclo se repite miles de veces.</span>
     </h2>
     <div class="diagrama">
       <svg viewBox="0 0 900 430" role="img" aria-label="El agente ejecuta una acción sobre el entorno, y el entorno le devuelve un nuevo estado y una recompensa">
@@ -261,9 +261,9 @@
 <section class="lamina" data-momento="2" aria-label="Qué problema resuelve el aprendizaje por refuerzo">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">¿Qué intenta resolver?
-      <span class="sub">En una frase: <b>encontrar, por prueba y error, la mejor secuencia de decisiones para lograr un objetivo</b> — sin que nadie diga de antemano cuál es la decisión correcta en cada paso.</span>
+      <span class="sub">Dicho brevemente, <b>encontrar por prueba y error la mejor secuencia de decisiones para lograr un objetivo</b>, sin que nadie diga de antemano cuál es la decisión correcta en cada paso.</span>
     </h2>
-    <p class="anotacion" style="text-align:center">Dicho así suena sencillo. Pero esconde <b>tres dificultades</b>, y todo lo que viene después no es más que la respuesta a cada una.</p>
+    <p class="anotacion" style="text-align:center">Parece sencillo, pero esconde <b>tres dificultades</b>; todo lo que sigue responde a cada una.</p>
     <div class="tres">
       <article class="caja" data-color="amarillo">
         <span class="etiqueta" style="color:var(--amarillo)">Dificultad 1</span>
@@ -338,7 +338,7 @@
       </article>
       <article class="caja caja--b" data-color="amarillo">
         <h3 style="color:var(--amarillo)">Qué dice la ecuación</h3>
-        <p>Izquierda: probabilidad del siguiente estado <b>sabiendo solo el presente</b>. Derecha: la misma, <b>sabiendo toda la historia</b>. <span class="resalta">El «=» afirma que son idénticas</span> — el pasado no aporta nada que el presente no diga ya.</p>
+        <p>Izquierda: probabilidad del siguiente estado <b>sabiendo solo el presente</b>. Derecha: la misma, <b>sabiendo toda la historia</b>. <span class="resalta">El «=» afirma que son idénticas</span>. El pasado no aporta nada que el presente no diga ya.</p>
       </article>
     </div>
   </div>
@@ -352,13 +352,13 @@
     <div class="dos">
       <article class="caja" data-color="naranja">
         <h3 style="color:var(--naranja)">Los dos lados NO coinciden</h3>
-        <p>El estado es <b>solo la posición</b> de una pelota en el aire. Con eso no puedes predecir dónde estará dentro de un segundo — pero viendo los instantes anteriores sí, porque deducirías hacia dónde iba.</p>
-        <p class="pregunta" style="color:var(--naranja)">La historia sí aportaba: falla Markov.</p>
+        <p>El estado es <b>solo la posición</b> de una pelota en el aire. Con eso no puedes predecir dónde estará dentro de un segundo, pero viendo los instantes anteriores sí, porque deducirías hacia dónde iba.</p>
+        <p class="pregunta" style="color:var(--naranja)">La historia sí aportaba, así que Markov no se cumple.</p>
       </article>
       <article class="caja caja--b" data-color="verde">
         <h3 style="color:var(--verde)">Los dos lados coinciden</h3>
         <p>El estado es <b>posición y velocidad</b>. Ahora conocer toda la historia no te daría ni un dato más útil del que ya tienes en este instante.</p>
-        <p class="pregunta" style="color:var(--verde)">Basta el presente: se cumple Markov.</p>
+        <p class="pregunta" style="color:var(--verde)">Basta el presente, así que Markov se cumple.</p>
       </article>
     </div>
     <p class="anotacion" style="text-align:center">Por eso, al plantear un problema de refuerzo, la primera decisión es <b>qué meter dentro del estado</b>: si falta algo, el agente no podrá predecir ni aprender bien.</p>
@@ -368,7 +368,7 @@
 <section class="lamina" data-momento="2" aria-label="Cadena de Markov">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">Paso 1 · Una cadena de Markov
-      <span class="sub">¿Por qué hablamos de esto en una charla de refuerzo? Porque <b>el entorno del bucle es exactamente un mundo así</b>: cambia de estado con ciertas probabilidades. Esto es lo más simple que se puede construir aceptando Markov — y todavía nadie decide nada.</span>
+      <span class="sub">¿Por qué hablamos de esto en una charla de refuerzo? Porque <b>el entorno del bucle es exactamente un mundo así</b>, que cambia de estado con ciertas probabilidades. Esto es lo más simple que se puede construir aceptando Markov, y todavía nadie decide nada.</span>
     </h2>
     <div class="diagrama">
       <svg viewBox="0 0 900 400" role="img" aria-label="Cadena de Markov del clima: soleado se mantiene con 0.6 y pasa a nublado con 0.4; nublado se mantiene con 0.3 y pasa a lluvia con 0.7; de lluvia se vuelve a soleado con probabilidad 1">
@@ -403,37 +403,37 @@
         <text class="rotulo" x="450" y="376" text-anchor="middle" font-size="27" fill="var(--tinta-suave)">1.0</text>
       </svg>
     </div>
-    <p class="anotacion" style="text-align:center">Las salidas de cada estado suman 1. El mundo se mueve solo; nosotros solo miramos.</p>
+    <p class="anotacion" style="text-align:center">Las salidas de cada estado suman 1. El sistema evoluciona sin intervención; solo se observa.</p>
   </div>
 </section>
 
 <section class="lamina" data-momento="2" aria-label="De cadena de Markov a proceso de decisión de Markov">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">Paso 1 · De mirar a decidir
-      <span class="sub">A esa cadena le faltan dos cosas para describir nuestro problema: <em>premios</em> y <em>decisiones</em>. Se añaden una por una, y al final tenemos el <b>proceso de decisión de Markov</b> — abreviado <b>MDP</b>.</span>
+      <span class="sub">A esa cadena le faltan dos cosas para describir nuestro problema: <em>premios</em> y <em>decisiones</em>. Se añaden una por una, y al final tenemos el <b>proceso de decisión de Markov</b>, abreviado <b>MDP</b>.</span>
     </h2>
     <div class="tres">
       <article class="caja" data-color="azul">
         <span class="etiqueta" style="color:var(--azul)">Escalón 1</span>
         <h3>Cadena de Markov</h3>
         <p class="formula formula--peq" style="text-align:left">⟨ <span class="v-estado">S</span>, P ⟩</p>
-        <p>Estados y transiciones. El mundo cambia solo. <b>Tú miras.</b></p>
+        <p>Estados y transiciones. El sistema cambia por sí solo; solo se observa.</p>
       </article>
       <article class="caja caja--b" data-color="verde">
         <span class="etiqueta" style="color:var(--verde)">Escalón 2</span>
         <h3>Proceso de recompensa</h3>
         <p class="formula formula--peq" style="text-align:left">⟨ <span class="v-estado">S</span>, P, <span class="v-premio">R</span>, <span class="v-gamma">γ</span> ⟩</p>
-        <p>Ahora además puntúa. <b>Tú sigues mirando</b>, pero ya sabes qué te conviene.</p>
+        <p>Ahora además puntúa. Se sigue observando, pero ya se sabe qué conviene.</p>
       </article>
       <article class="caja caja--c" data-color="morado">
         <span class="etiqueta" style="color:var(--morado)">Escalón 3</span>
         <h3>Proceso de decisión (MDP)</h3>
         <p class="formula formula--peq" style="text-align:left">⟨ <span class="v-estado">S</span>, <span class="v-accion">A</span>, P, <span class="v-premio">R</span>, <span class="v-gamma">γ</span> ⟩</p>
-        <p>Aparecen las acciones. <b>Ahora eliges tú</b>, y el mundo responde.</p>
+        <p>Aparecen las acciones: ahora se decide, y el entorno responde.</p>
       </article>
     </div>
     <div class="caja" data-color="amarillo" style="transform:rotate(-.3deg)">
-      <p>Este último —el <b>MDP</b>— es la versión completa. En la próxima lámina vemos qué significa cada letra, y por qué esto es, literalmente, la definición de <b>Aprendizaje por Refuerzo</b> (o <i>Reinforcement Learning</i>, <b>RL</b> por sus siglas en inglés).</p>
+      <p>Este último, el <b>MDP</b>, es la versión completa. En la próxima lámina vemos qué significa cada letra, y por qué el MDP es <b>la forma de plantear el problema</b> que el <b>Aprendizaje por Refuerzo</b> (o <i>Reinforcement Learning</i>, <b>RL</b>) resuelve. El MDP es el <em>problema</em> y RL es uno de los <em>métodos</em> para resolverlo.</p>
     </div>
   </div>
 </section>
@@ -451,17 +451,17 @@
       <div><b style="color:var(--naranja)">γ</b><span>Cuánto le importa al agente el futuro.</span></div>
     </div>
     <div class="caja" data-color="morado" style="transform:rotate(-.2deg)">
-      <p style="margin-bottom:.5em"><span class="resalta">Nada de esto es nuevo.</span> S, A, R y la política π ya aparecieron en el bucle del Momento 1, solo que sin nombre matemático. P y γ son lo que Markov añade: la certeza de que el presente basta, y una forma de pesar el futuro.</p>
-      <p><b>Aprendizaje por Refuerzo</b> es encontrar la política óptima <b>π*</b> —la que consigue el mejor resultado posible— para un Proceso de Decisión de Markov, <b>aprendiendo de la experiencia</b> porque nadie entrega P ni R de antemano.</p>
+      <p style="margin-bottom:.5em"><span class="resalta">Nada de esto es nuevo.</span> S, A, R y la política π ya aparecieron en el bucle del Momento 1, solo que sin nombre matemático. P y γ son lo que Markov añade, es decir, la certeza de que el presente basta y una forma de pesar el futuro.</p>
+      <p><b>Aprendizaje por Refuerzo</b> es encontrar la política óptima <b>π*</b> (la que consigue el mejor resultado posible) para un Proceso de Decisión de Markov, <b>aprendiendo de la experiencia</b> porque nadie entrega P ni R de antemano.</p>
     </div>
-    <p class="anotacion" style="text-align:center">Paso 1 terminado: ya sabemos <b>qué</b> buscamos. El Paso 2 responde <b>cómo se mide</b>, y el Paso 3, <b>cómo se encuentra</b>.</p>
+    <p class="anotacion" style="text-align:center">Con el Paso 1 ya sabemos <b>qué</b> buscamos. El Paso 2 responde <b>cómo se mide</b>, y el Paso 3, <b>cómo se encuentra</b>.</p>
   </div>
 </section>
 
 <section class="lamina" data-momento="2" aria-label="El retorno y el factor de descuento">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">Paso 2 · No maximizamos el premio: maximizamos el futuro
-      <span class="sub">Para comparar dos políticas hay que puntuarlas. Lo primero: fijar qué maximiza el agente — no <span class="v-premio">r</span>, sino <b>G</b>.</span>
+    <h2 class="titulo-lamina">Paso 2 · El objetivo es el retorno, no la recompensa inmediata
+      <span class="sub">Para comparar dos políticas hay que puntuarlas. Lo primero es fijar qué maximiza el agente, que no es <span class="v-premio">r</span> sino <b>G</b>.</span>
     </h2>
     <div class="caja" data-color="verde" style="transform:rotate(.25deg)">
       <p class="formula">
@@ -542,7 +542,7 @@
 <section class="lamina" data-momento="2" aria-label="Política y funciones de valor">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">Paso 2 · Las dos formas de medir «lo bueno»
-      <span class="sub">El retorno <b>G</b> puntúa <em>una</em> partida concreta. Pero para aprender hace falta un número estable por estado y por acción — eso son <b>V</b> y <b>Q</b>, y es lo que los algoritmos guardan y mejoran.</span>
+      <span class="sub">El retorno <b>G</b> puntúa <em>una</em> partida concreta. Pero para aprender hace falta un número estable por estado y por acción. Eso son <b>V</b> y <b>Q</b>, y es lo que los algoritmos guardan y mejoran.</span>
     </h2>
     <div class="tres">
       <article class="caja" data-color="amarillo">
@@ -559,9 +559,9 @@
       </article>
     </div>
     <div class="caja" data-color="verde" style="transform:rotate(-.3deg)">
-      <p><span class="resalta">Q parece un detalle técnico y es la clave práctica.</span> Con solo <span class="v-estado">V</span> no puedes actuar: sabrías qué estados son buenos, pero no a cuál te lleva cada acción — para eso necesitarías el mapa del mundo. Con <span class="v-accion">Q</span> decides sin mapa: miras las acciones desde tu estado y eliges la de mayor valor.</p>
+      <p><span class="resalta">Q parece un detalle técnico y es la clave práctica.</span> Con solo <span class="v-estado">V</span> no puedes actuar, porque sabrías qué estados son buenos pero no a cuál te lleva cada acción, y para eso necesitarías el mapa del mundo. Con <span class="v-accion">Q</span> decides sin mapa, porque miras las acciones desde tu estado y eliges la de mayor valor.</p>
       <p class="formula formula--peq" style="margin-top:.7em">π*(<span class="v-estado">s</span>) &nbsp;=&nbsp; arg max<sub style="font-size:.62em"><span class="v-accion">a</span></sub> &nbsp;Q*(<span class="v-estado">s</span>, <span class="v-accion">a</span>)</p>
-      <p class="anotacion" style="text-align:center;margin-top:.35em">«arg max» = la acción <span class="v-accion">a</span> que hace ese valor más grande — no el valor en sí, sino cuál lo logra.</p>
+      <p class="anotacion" style="text-align:center;margin-top:.35em">«arg max» = la acción <span class="v-accion">a</span> que hace ese valor más grande, no el valor en sí sino cuál lo logra.</p>
     </div>
   </div>
 </section>
@@ -593,7 +593,7 @@
       <article class="caja caja--b" data-color="amarillo">
         <h3 style="color:var(--amarillo)">Qué dice la ecuación</h3>
         <p><span class="resalta">Lo que vale estar aquí es el mejor premio que puedo obtener ahora, más lo que valga el sitio al que eso me lleve.</span></p>
-        <p style="margin-top:.45em">La intuición: para saber si una situación es buena <b>no hace falta imaginar la partida entera</b> — basta mirar un paso y confiar en el valor del siguiente. Y <b>V*</b> aparece a los dos lados: se define a sí misma, y eso es justo lo que permite calcularla poco a poco.</p>
+        <p style="margin-top:.45em">Para saber si una situación es buena <b>no hace falta imaginar la partida entera</b>; basta mirar un paso y confiar en el valor del siguiente. Además, <b>V*</b> aparece a los dos lados, se define a sí misma, y eso es justo lo que permite calcularla poco a poco.</p>
       </article>
     </div>
   </div>
@@ -623,37 +623,37 @@
         </ul>
       </article>
     </div>
-    <p class="anotacion" style="text-align:center">Es la base teórica de todo lo demás — y por eso mismo, rara vez la herramienta final.</p>
+    <p class="anotacion" style="text-align:center">Es la base teórica del resto, aunque por su costo rara vez es la herramienta final.</p>
   </div>
 </section>
 
 <section class="lamina" data-momento="2" aria-label="Aprender de la experiencia">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">Paso 3, segunda vía · Sin mapa
-      <span class="sub">Pero casi nunca tienes P y R — era el tercer problema del principio. La única salida: jugar, observar y corregir. Dos maneras de hacerlo.</span>
+      <span class="sub">Pero casi nunca tienes P y R, que era el tercer problema del principio. La única salida es jugar, observar y corregir. Hay dos maneras de hacerlo.</span>
     </h2>
     <div class="dos">
       <article class="caja" data-color="naranja">
         <span class="etiqueta" style="color:var(--naranja)">Monte Carlo</span>
         <h3>Esperar al final</h3>
-        <p>El nombre viene del casino: como en una apuesta, <b>juegas el episodio completo</b> y usas el retorno que realmente ocurrió — es lo que pasó, sin suposiciones.</p>
+        <p>El nombre viene del casino. Como en una apuesta, <b>juegas el episodio completo</b> y usas el retorno que realmente ocurrió, sin suposiciones.</p>
         <p class="pregunta" style="color:var(--naranja)">Certero, pero lento y muy variable.</p>
       </article>
       <article class="caja caja--b" data-color="verde">
         <span class="etiqueta" style="color:var(--verde)">Diferencias temporales (TD)</span>
         <h3>Corregir en cada paso</h3>
-        <p>No esperes al final: das un paso y <b>comparas lo que esperabas con lo que ocurrió</b> — esa diferencia entre instantes le da el nombre.</p>
+        <p>No esperes al final. Das un paso y <b>comparas lo que esperabas con lo que ocurrió</b>, y esa diferencia entre instantes le da el nombre.</p>
         <p class="pregunta" style="color:var(--verde)">Aprende sobre la marcha.</p>
       </article>
     </div>
-    <p class="anotacion" style="text-align:center">De estas dos ideas sale el algoritmo más conocido del área — y es el que vemos ahora.</p>
+    <p class="anotacion" style="text-align:center">De estas dos ideas sale el algoritmo más conocido del área, que es el que vemos ahora.</p>
   </div>
 </section>
 
 <section class="lamina" data-momento="2" aria-label="Q-learning">
   <div class="lienzo lienzo--ancho">
     <h2 class="titulo-lamina">Paso 3 · Q-learning
-      <span class="sub">Las diferencias temporales aplicadas a <b>Q</b>, el valor de cada acción. Es el algoritmo que permite alcanzar π* <em>sin conocer nunca</em> las reglas del mundo — por eso es el más usado.</span>
+      <span class="sub">Las diferencias temporales aplicadas a <b>Q</b>, el valor de cada acción. Es el algoritmo que permite alcanzar π* <em>sin conocer nunca</em> las reglas del mundo, y por eso es el más usado.</span>
     </h2>
     <div class="caja" data-color="morado" style="transform:rotate(.2deg)">
       <p class="formula formula--peq">
@@ -685,7 +685,7 @@
 
 <section class="lamina" data-momento="2" aria-label="Exploración frente a explotación">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">Paso 3 · La pieza que falta
+    <h2 class="titulo-lamina">Paso 3 · Explorar o explotar
       <span class="sub">Aprender jugando plantea una última pregunta: ¿el agente repite lo que ya le funciona, o prueba algo nuevo? Es la duda que anunciamos en el Momento 1 al hablar de respuestas que solo puntúan.</span>
     </h2>
     <div class="dos">
@@ -702,7 +702,7 @@
       <h3 style="color:var(--amarillo)">ε-greedy: la regla que reparte entre las dos</h3>
       <p>Es la solución más usada, por lo simple que es. Antes de cada acción se lanza una moneda trucada: <b>con probabilidad ε</b> el agente actúa al azar (explora); <b>el resto de las veces</b> toma la acción de mayor <span class="v-accion">Q</span> (explota).</p>
       <div class="leyenda" style="margin-top:.5em">
-        <div><b style="color:var(--naranja)">ε</b><span>Un número entre 0 y 1: la proporción de veces que prueba algo al azar. Se empieza alto —casi todo curiosidad, porque aún no sabe nada— y se baja a medida que <span class="v-accion">Q</span> se vuelve fiable.</span></div>
+        <div><b style="color:var(--naranja)">ε</b><span>Un número entre 0 y 1, la proporción de veces que prueba algo al azar. Se empieza alto (casi todo curiosidad, porque aún no sabe nada) y se baja a medida que <span class="v-accion">Q</span> se vuelve fiable.</span></div>
       </div>
       <p style="margin-top:.5em"><span class="resalta">Sin esta pieza, Q-learning se quedaría atrapado en el primer camino que funcionó.</span> Es lo que garantiza que el agente llegue a π* y no a una política mediocre.</p>
     </div>
@@ -711,8 +711,8 @@
 
 <section class="lamina" data-momento="2" aria-label="Comparación de las tres familias de métodos">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">Cierre · El camino completo
-      <span class="sub"><b>Paso 1</b> nos dio el lenguaje (Markov → MDP). <b>Paso 2</b>, la forma de medir (retorno → V y Q → Bellman). <b>Paso 3</b>, las formas de buscar π* — estas tres. Ninguna es «la mejor»: cada una paga un precio distinto.</span>
+    <h2 class="titulo-lamina">Cierre · Comparación de los tres métodos
+      <span class="sub"><b>Paso 1</b> nos dio el lenguaje (Markov → MDP). <b>Paso 2</b>, la forma de medir (retorno → V y Q → Bellman). <b>Paso 3</b>, las formas de buscar π*, estas tres. Ninguna es «la mejor», cada una paga un precio distinto.</span>
     </h2>
     <div class="tabla-envoltorio">
       <table class="comparativa">
@@ -728,7 +728,7 @@
       </table>
     </div>
     <div class="caja" data-color="morado" style="transform:rotate(-.2deg)">
-      <p><span class="resalta">Esto es Aprendizaje por Refuerzo, completo:</span> un agente que busca la política óptima π* de un Proceso de Decisión de Markov — con mapa (programación dinámica), o sin mapa, jugando y corrigiendo (Monte Carlo o diferencias temporales), mientras decide cuánto explorar y cuánto explotar lo aprendido. En la práctica, casi siempre gana la última: aprende sin manual y sin esperar al final.</p>
+      <p><span class="resalta">Resolver un MDP tiene dos vías.</span> Con mapa, la <b>planificación</b> (programación dinámica, si conoces P y R). Sin mapa, el <b>Aprendizaje por Refuerzo</b> propiamente dicho, que consiste en jugar y corregir (Monte Carlo o diferencias temporales) mientras se decide cuánto explorar y cuánto explotar. La DP es la base teórica; RL es lo que se usa cuando no hay manual del mundo, que es casi siempre.</p>
     </div>
   </div>
 </section>
@@ -738,7 +738,7 @@
   <div class="lienzo">
     <span class="numero">3</span>
     <h2>Un ejemplo<br>que ya conoces</h2>
-    <p class="lema">Agente, estados, acciones, recompensa, política — y también las tres dificultades. Todo lo del Momento 2 ocurre cada vez que alguien le enseña un truco a un perro: sin una sola ecuación, y mucho antes de que existieran los computadores.</p>
+    <p class="lema">Agente, estados, acciones, recompensa y política, y también las tres dificultades. Todo lo del Momento 2 ocurre cada vez que alguien le enseña un truco a un perro, sin una sola ecuación y mucho antes de que existieran los computadores.</p>
   </div>
 </section>
 
@@ -748,7 +748,7 @@
       <span class="sub">Thorndike lo describió en 1898, mucho antes de que existiera un computador: <em>la conducta seguida de algo bueno tiende a repetirse</em>.</span>
     </h2>
     <div class="caja" data-color="morado" style="transform:rotate(-.25deg)">
-      <p>Nadie le explica al perro qué es «sentarse». <span class="resalta">Al perro no le dan instrucciones: le dan consecuencias.</span> Prueba cosas —ladrar, saltar, girar, sentarse—, y una de ellas trae galleta. Eso es feedback evaluativo puro, exactamente el de la lámina del principio.</p>
+      <p>Nadie le explica al perro qué es «sentarse». <span class="resalta">Al perro no le dan instrucciones, le dan consecuencias.</span> Prueba cosas (ladrar, saltar, girar, sentarse), y una de ellas trae galleta. Eso es feedback evaluativo puro, exactamente el de la lámina del principio.</p>
     </div>
     <div class="tabla-envoltorio">
       <table class="comparativa">
@@ -768,7 +768,7 @@
 
 <section class="lamina" data-momento="3" aria-label="Lo que sale mal al entrenar un perro">
   <div class="lienzo lienzo--ancho">
-    <h2 class="titulo-lamina">Y lo que sale mal es lo mismo que sale mal en RL
+    <h2 class="titulo-lamina">Los fallos del adiestramiento son los mismos que en RL
       <span class="sub">Los fallos del adiestramiento tienen nombre técnico. No es una metáfora: es el mismo problema.</span>
     </h2>
     <div class="tres">
@@ -780,7 +780,7 @@
       <article class="caja caja--b" data-color="verde">
         <span class="etiqueta" style="color:var(--verde)">Recompensa escasa</span>
         <h3>Solo premias el truco entero</h3>
-        <p>Si esperas la voltereta completa, no llega nunca por azar. Hay que premiar <b>aproximaciones sucesivas</b> — ese truco tiene nombre técnico en RL: <i>reward shaping</i>, o simplemente <i>shaping</i>.</p>
+        <p>Si esperas la voltereta completa, no llega nunca por azar. Hay que premiar <b>aproximaciones sucesivas</b>, un procedimiento que en RL se llama <i>reward shaping</i>, o simplemente <i>shaping</i>.</p>
       </article>
       <article class="caja caja--c" data-color="naranja">
         <span class="etiqueta" style="color:var(--naranja)">Premiar lo que no era</span>
@@ -801,7 +801,7 @@
     </div>
     <div class="caja caja--b" data-color="azul">
       <h3 style="color:var(--azul)">El MDP es el marco, Bellman es el motor</h3>
-      <p>Estados, acciones, recompensa y descuento. Con el mapa del mundo se resuelve con programación dinámica; sin él, con experiencia — Monte Carlo o diferencias temporales.</p>
+      <p>Estados, acciones, recompensa y descuento. Con el mapa del mundo se resuelve con programación dinámica; sin él, con experiencia (Monte Carlo o diferencias temporales).</p>
     </div>
     <div class="caja caja--c" data-color="verde">
       <h3 style="color:var(--verde)">Lo difícil casi nunca es el algoritmo</h3>
